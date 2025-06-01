@@ -1,0 +1,36 @@
+.propiedades-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.propiedades-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.propiedad-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+}
+
+.propiedad-card img {
+    width: 100%;
+    border-radius: 5px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.propiedad-card h3 {
+    margin: 15px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.propiedad-card p {
+    font-size: 14px;
+    color: #777;
+}

@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  Grid,
   Typography,
   TextField,
   Button,
   Box,
+  IconButton,
 } from "@mui/material";
-import { postRequest } from "../../Services/Apis";
+import CloseIcon from "@mui/icons-material/Close";
 import { showAlert } from "../../components/AlertMessage";
 import { useNavigate } from "react-router-dom";
+import DEMLogo from "../../assets/DEMLogo.png";
+import { useApi } from "../../Services/Apis";
 
 const AuthModal = ({ open, onClose, onSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,6 +25,7 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
   });
 
   const navigate = useNavigate();
+  const { postRequest } = useApi();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -80,99 +83,136 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
         setIsLogin(true);
       }
     } catch (err) {
-      showAlert("Error de autenticación", "error");
+      if (err?.response?.data?.detalleUsuario) {
+        showAlert(err.response.data.detalleUsuario, "error");
+      } else if (err?.response?.data?.errores?.length) {
+        showAlert(err.response.data.errores[0], "error");
+      } else {
+        showAlert("Ocurrió un error inesperado", "error");
+      }
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md">
-      <DialogContent sx={{ p: 0, minHeight: 420 }}>
-        <Grid container>
-          <Grid
-            item
-            xs={5}
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogContent sx={{ p: 0, position: "relative" }}>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", sm: "row" }}
+          minHeight={480}
+        >
+          <Box
             sx={{
+              flex: 1,
               backgroundColor: "primary.main",
               color: "white",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
+              justifyContent: "center",
               p: 3,
+              gap: 2,
+              textAlign: "center",
             }}
           >
+            <img
+              src={DEMLogo}
+              alt="DEM Logo"
+              style={{ height: 150, width: 160, marginBottom: 0 }}
+            />
             <Typography variant="h5" fontWeight="bold">
               {isLogin ? "Inicia sesión" : "Crea tu cuenta"}
             </Typography>
-            <Typography variant="body2" mt={1}>
+            <Typography variant="body2">
               {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes una cuenta?"}
-              <Button
-                variant="text"
-                color="inherit"
-                onClick={() => setIsLogin(!isLogin)}
-                sx={{ ml: 1 }}
-              >
-                {isLogin ? "Regístrate" : "Inicia sesión"}
-              </Button>
             </Typography>
-          </Grid>
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              onClick={() => setIsLogin(!isLogin)}
+              sx={{ textTransform: "none", mt: 1, borderRadius: 2 }}
+            >
+              {isLogin ? "Regístrate" : "Inicia sesión"}
+            </Button>
+          </Box>
 
-          <Grid item xs={7} sx={{ p: 4 }}>
+          <Box
+            sx={{
+              flex: 1,
+              position: "relative",
+              p: { xs: 3, sm: 4 },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: 2,
+            }}
+          >
+            <IconButton
+              onClick={onClose}
+              sx={{ position: "absolute", top: 8, right: 8 }}
+              size="small"
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+
             {!isLogin && (
-              <TextField
-                fullWidth
-                label="Nombre"
-                name="nombre1"
-                margin="dense"
-                onChange={handleChange}
-              />
+              <>
+                <TextField
+                  fullWidth
+                  label="Nombre"
+                  name="nombre1"
+                  onChange={handleChange}
+                  variant="outlined"
+                  size="small"
+                />
+                <TextField
+                  fullWidth
+                  label="Apellido"
+                  name="apellido1"
+                  onChange={handleChange}
+                  variant="outlined"
+                  size="small"
+                />
+                <TextField
+                  fullWidth
+                  label="Teléfono"
+                  name="telefono"
+                  onChange={handleChange}
+                  variant="outlined"
+                  size="small"
+                />
+              </>
             )}
-            {!isLogin && (
-              <TextField
-                fullWidth
-                label="Apellido"
-                name="apellido1"
-                margin="dense"
-                onChange={handleChange}
-              />
-            )}
-            {!isLogin && (
-              <TextField
-                fullWidth
-                label="Teléfono"
-                name="telefono"
-                margin="dense"
-                onChange={handleChange}
-              />
-            )}
+
             <TextField
               fullWidth
               label="Correo electrónico"
               name="email"
-              margin="dense"
               onChange={handleChange}
+              variant="outlined"
+              size="small"
             />
             <TextField
               fullWidth
               label="Contraseña"
               name="password"
               type="password"
-              margin="dense"
               onChange={handleChange}
+              variant="outlined"
+              size="small"
             />
 
-            <Box mt={3}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                {isLogin ? "Ingresar" : "Registrarse"}
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 1, borderRadius: 2, textTransform: "none" }}
+              onClick={handleSubmit}
+            >
+              {isLogin ? "Ingresar" : "Registrarse"}
+            </Button>
+          </Box>
+        </Box>
       </DialogContent>
     </Dialog>
   );

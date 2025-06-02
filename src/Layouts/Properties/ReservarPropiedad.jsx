@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
@@ -7,23 +7,72 @@ import {
   Button,
   Box,
   Grid,
+  Paper,
+  InputAdornment,
+  Card,
+  CardContent,
+  CardMedia,
+  FormHelperText,
 } from "@mui/material";
-
-import { postRequest } from "../../Services/Apis";
-import NavigationBar from "../../Components/NavigationBar";
+import EventIcon from "@mui/icons-material/Event";
+import PeopleIcon from "@mui/icons-material/People";
+import { useApi } from "../../Services/Apis";
+import { showAlert } from "../../components/AlertMessage";
+import NavigationBar from "../../components/NavigationBar";
 
 const ReservaPropiedad = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { postRequest, getRequest } = useApi();
 
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [cantidadPersonas, setCantidadPersonas] = useState(1);
+  const [propiedad, setPropiedad] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchPropiedad = async () => {
+      try {
+        const res = await getRequest(`/api/propiedad/propiedades`);
+        const match = res.data?.propiedades?.find(
+          (p) => p.propiedadId.toString() === id
+        );
+        if (match) setPropiedad(match);
+      } catch (error) {
+        console.error("Error al obtener propiedad:", error);
+      }
+    };
+    fetchPropiedad();
+  }, [id]);
+
+  const todayStr = new Date().toISOString().split("T")[0];
 
   const handleReserva = async () => {
+    const hoy = new Date();
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+    hoy.setHours(0, 0, 0, 0);
+    inicio.setHours(0, 0, 0, 0);
+    fin.setHours(0, 0, 0, 0);
+
+    const newErrors = {};
+
+    if (!fechaInicio) newErrors.fechaInicio = "Seleccione una fecha válida.";
+    if (!fechaFin) newErrors.fechaFin = "Seleccione una fecha válida.";
+    if (inicio < hoy) newErrors.fechaInicio = "La fecha debe ser hoy o futura.";
+    if (fin <= inicio)
+      newErrors.fechaFin = "Debe ser posterior a la fecha de inicio.";
+    if (!cantidadPersonas || cantidadPersonas < 1)
+      newErrors.cantidadPersonas = "Debe ser al menos 1 persona.";
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login");
+      showAlert("Debes iniciar sesión para reservar", "warning");
+      navigate("/");
       return;
     }
 
@@ -36,68 +85,130 @@ const ReservaPropiedad = () => {
 
     try {
       await postRequest("/api/reserva/crear", reservaData);
-      alert("Reserva realizada con éxito");
+      showAlert("Reserva realizada con éxito", "success");
       navigate("/");
     } catch (error) {
-      console.error("Error al realizar la reserva", error);
-      alert("Error al realizar la reserva");
+      if (error?.response?.data?.detalleUsuario) {
+        showAlert(error.response.data.detalleUsuario, "error");
+      } else {
+        showAlert("Error al realizar la reserva", "error");
+      }
     }
   };
 
   return (
     <>
       <NavigationBar />
-      <Container maxWidth="sm" sx={{ mt: 4, mb: 6 }}>
-        <Typography variant="h5" gutterBottom fontWeight="bold">
-          Reservar Propiedad #{id}
-        </Typography>
+      <Container maxWidth="md" sx={{ mt: 4, mb: 6 }}>
+        {propiedad && (
+          <Card elevation={1} sx={{ mb: 4, borderRadius: 3, display: "flex" }}>
+            <CardMedia
+              component="img"
+              sx={{ width: 300, height: "100%", objectFit: "cover" }}
+              image={
+                propiedad.imagenBase64 ||
+                "https://via.placeholder.com/400x300?text=Sin+imagen"
+              }
+              alt="Imagen propiedad"
+            />
+            <CardContent sx={{ flex: 1 }}>
+              <Typography variant="h5" fontWeight="bold" gutterBottom>
+                {propiedad.titulo}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" paragraph>
+                {propiedad.descripcion}
+              </Typography>
+              <Typography variant="h6" color="primary">
+                ${propiedad.precioPorNoche} / noche
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
 
-        <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Fecha de inicio"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={fechaInicio}
-                onChange={(e) => setFechaInicio(e.target.value)}
-              />
-            </Grid>
+        <Paper elevation={1} sx={{ p: 4, borderRadius: 3 }}>
+          <Typography variant="h6" fontWeight="bold" gutterBottom>
+            Detalles de la Reserva
+          </Typography>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Fecha de fin"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={fechaFin}
-                onChange={(e) => setFechaFin(e.target.value)}
-              />
-            </Grid>
+          <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Fecha de inicio"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{ min: todayStr }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EventIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  value={fechaInicio}
+                  onChange={(e) => setFechaInicio(e.target.value)}
+                  error={Boolean(errors.fechaInicio)}
+                  helperText={errors.fechaInicio}
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Cantidad de personas"
-                type="number"
-                value={cantidadPersonas}
-                onChange={(e) => setCantidadPersonas(e.target.value)}
-              />
-            </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Fecha de fin"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{ min: fechaInicio || todayStr }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EventIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  value={fechaFin}
+                  onChange={(e) => setFechaFin(e.target.value)}
+                  error={Boolean(errors.fechaFin)}
+                  helperText={errors.fechaFin}
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleReserva}
-              >
-                Confirmar Reserva
-              </Button>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Cantidad de personas"
+                  type="number"
+                  inputProps={{ min: 1 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PeopleIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  value={cantidadPersonas}
+                  onChange={(e) => setCantidadPersonas(e.target.value)}
+                  error={Boolean(errors.cantidadPersonas)}
+                  helperText={errors.cantidadPersonas}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  sx={{ borderRadius: 2, textTransform: "none" }}
+                  onClick={handleReserva}
+                >
+                  Confirmar Reserva
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
+          </Box>
+        </Paper>
       </Container>
     </>
   );

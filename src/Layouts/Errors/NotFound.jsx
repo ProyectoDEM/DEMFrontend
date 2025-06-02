@@ -1,28 +1,36 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Importa useNavigate en lugar de useHistory
+import { useNavigate } from "react-router-dom";
+import { Container, Typography, Button, Box, Paper } from "@mui/material";
 
 const NotFound = () => {
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate();
 
   const handleRedirect = () => {
-    navigate("/login"); // Redirige a la página de login cuando el usuario hace clic en el botón
+    navigate("/");
   };
 
   return (
-    <div className="notfound-container">
-      <div className="notfound-box">
-        <h1 className="notfound-heading">404</h1>
-        <p className="notfound-message">
+    <Container maxWidth="sm" sx={{ mt: 8 }}>
+      <Paper elevation={3} sx={{ p: 4, textAlign: "center", borderRadius: 3 }}>
+        <Typography variant="h2" fontWeight="bold" color="primary" gutterBottom>
+          404
+        </Typography>
+        <Typography variant="h6" gutterBottom>
           ¡Vaya! No encontramos lo que buscabas.
-        </p>
-        <p className="notfound-submessage">
-          Haz clic en el botón para ser redirigido al login.
-        </p>
-        <button onClick={handleRedirect} className="redirect-button">
-          Ir al Login
-        </button>
-      </div>
-    </div>
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Haz clic en el botón para volver al inicio.
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleRedirect}
+          sx={{ textTransform: "none", borderRadius: 2 }}
+        >
+          Volver al inicio
+        </Button>
+      </Paper>
+    </Container>
   );
 };
 

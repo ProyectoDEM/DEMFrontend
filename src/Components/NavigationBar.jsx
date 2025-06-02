@@ -12,34 +12,51 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { showAlert } from "./AlertMessage";
 import AuthModal from "../Layouts/Auth/AuthModal";
-import { getRequest } from "../Services/Apis";
+import { useApi } from "../Services/Apis";
+import DEMLogo from "../assets/DEMLogo.png";
 
-const NavigationBar = () => {
+const NavigationBar = ({ logo }) => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const { getRequest } = useApi();
 
   useEffect(() => {
+    let cancelado = false;
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token || userInfo) return;
+
+    const nombre1 = localStorage.getItem("nombre1");
+    const apellido1 = localStorage.getItem("apellido1");
+
+    if (nombre1 && apellido1) {
+      setUserInfo({ nombre: nombre1, apellido: apellido1 });
+      return;
+    }
 
     const fetchSessionData = async () => {
       try {
         const res = await getRequest("/api/sesion/datos-sesion");
-        const { nombre1, apellido1, email } = res.data;
+        if (cancelado || !res?.data?.nombre1 || !res?.data?.apellido1) return;
 
+        const { nombre1, apellido1, email } = res.data;
         localStorage.setItem("nombre1", nombre1);
         localStorage.setItem("apellido1", apellido1);
         localStorage.setItem("email", email);
-
         setUserInfo({ nombre: nombre1, apellido: apellido1 });
       } catch (error) {
-        showAlert("No se pudo obtener la información del usuario", "error");
+        if (!cancelado) {
+          console.error("Error al obtener sesión:", error);
+          showAlert("No se pudo obtener la información del usuario", "error");
+        }
       }
     };
 
     fetchSessionData();
-  }, []);
+    return () => {
+      cancelado = true;
+    };
+  }, []); // solo se ejecuta una vez
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -70,15 +87,18 @@ const NavigationBar = () => {
       >
         <Container maxWidth="lg">
           <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ fontWeight: "bold", cursor: "pointer" }}
+            <Box
               onClick={() => navigate("/")}
+              sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
             >
-              Donde es Mae?
-            </Typography>
+              {logo || (
+                <img
+                  src={DEMLogo}
+                  alt="DEM Logo"
+                  style={{ height: 80, width: 100 }}
+                />
+              )}
+            </Box>
 
             <Box display="flex" alignItems="center" gap={2}>
               {userInfo ? (

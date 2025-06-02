@@ -12,10 +12,11 @@ import {
   Card,
   CardContent,
   CardMedia,
-  FormHelperText,
+  IconButton,
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import PeopleIcon from "@mui/icons-material/People";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useApi } from "../../Services/Apis";
 import { showAlert } from "../../components/AlertMessage";
 import NavigationBar from "../../components/NavigationBar";
@@ -100,6 +101,19 @@ const ReservaPropiedad = () => {
     <>
       <NavigationBar />
       <Container maxWidth="md" sx={{ mt: 4, mb: 6 }}>
+        <Box display="flex" alignItems="center" mb={2}>
+          <IconButton onClick={() => navigate(-1)} size="small">
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography
+            variant="body2"
+            sx={{ ml: 1, cursor: "pointer" }}
+            onClick={() => navigate(-1)}
+          >
+            Volver
+          </Typography>
+        </Box>
+
         {propiedad && (
           <Card elevation={1} sx={{ mb: 4, borderRadius: 3, display: "flex" }}>
             <CardMedia

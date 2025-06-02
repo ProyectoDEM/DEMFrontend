@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Container,
-} from "@mui/material";
+import { AppBar, Toolbar, Button, Box, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -19,6 +12,7 @@ const NavigationBar = ({ logo }) => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [pendingRedirect, setPendingRedirect] = useState(null);
   const { getRequest } = useApi();
 
   useEffect(() => {
@@ -56,7 +50,7 @@ const NavigationBar = ({ logo }) => {
     return () => {
       cancelado = true;
     };
-  }, []); // solo se ejecuta una vez
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -75,6 +69,21 @@ const NavigationBar = ({ logo }) => {
     setUserInfo({ nombre: data.nombre1, apellido: data.apellido1 });
     showAlert("Sesión iniciada correctamente", "success");
     setOpenModal(false);
+
+    if (pendingRedirect === "publicar") {
+      navigate("/publicar");
+      setPendingRedirect(null);
+    }
+  };
+
+  const handlePublicarClick = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/publicar");
+    } else {
+      setPendingRedirect("publicar");
+      setOpenModal(true);
+    }
   };
 
   return (
@@ -95,12 +104,20 @@ const NavigationBar = ({ logo }) => {
                 <img
                   src={DEMLogo}
                   alt="DEM Logo"
-                  style={{ height: 80, width: 100 }}
+                  style={{ height: 80, width: 90 }}
                 />
               )}
             </Box>
 
             <Box display="flex" alignItems="center" gap={2}>
+              <Button
+                color="inherit"
+                onClick={handlePublicarClick}
+                sx={{ textTransform: "none" }}
+              >
+                Publicar alojamiento
+              </Button>
+
               {userInfo ? (
                 <>
                   <Button

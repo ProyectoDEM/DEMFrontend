@@ -8,6 +8,7 @@ import DetallePropiedad from "./Layouts/Properties/DetallePropiedad";
 import ReservaPropiedad from "./Layouts/Properties/ReservarPropiedad";
 import AuthModal from "./Layouts/Auth/AuthModal";
 import MiCuenta from "./Layouts/Account/MiCuenta";
+import Publicar from "./Layouts/Properties/Publicar";
 /* Fin Importaciones */
 
 const App = () => {
@@ -26,6 +27,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/publicar"
+          element={
+            <ProtectedRoute>
+              <Publicar />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/mi-cuenta"
           element={

@@ -27,8 +27,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import HotelIcon from "@mui/icons-material/Hotel";
 import BathtubIcon from "@mui/icons-material/Bathtub";
-import NavigationBar from "../../components/NavigationBar";
-import { showAlert } from "../../components/AlertMessage";
+import NavigationBar from "../../Components/NavigationBar";
+import { showAlert } from "../../Components/AlertMessage";
 import AuthModal from "../Auth/AuthModal";
 import { useApi } from "../../Services/Apis";
 

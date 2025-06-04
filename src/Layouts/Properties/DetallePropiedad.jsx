@@ -25,9 +25,9 @@ import GroupIcon from "@mui/icons-material/Group";
 import CategoryIcon from "@mui/icons-material/Category";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import RoomIcon from "@mui/icons-material/Room";
-import NavigationBar from "../../components/NavigationBar";
+import NavigationBar from "../../Components/NavigationBar";
 import { useApi } from "../../Services/Apis";
-import { showAlert } from "../../components/AlertMessage";
+import { showAlert } from "../../Components/AlertMessage";
 
 const DetallePropiedad = () => {
   const { id } = useParams();

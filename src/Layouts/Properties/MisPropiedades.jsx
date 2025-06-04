@@ -16,7 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useApi } from "../../Services/Apis";
-import NavigationBar from "../../components/NavigationBar";
+import NavigationBar from "../../Components/NavigationBar";
 
 const MisPropiedades = () => {
   const [propiedades, setPropiedades] = useState([]);

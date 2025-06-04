@@ -18,8 +18,8 @@ import EventIcon from "@mui/icons-material/Event";
 import PeopleIcon from "@mui/icons-material/People";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useApi } from "../../Services/Apis";
-import { showAlert } from "../../components/AlertMessage";
-import NavigationBar from "../../components/NavigationBar";
+import { showAlert } from "../../Components/AlertMessage";
+import NavigationBar from "../../Components/NavigationBar";
 
 const ReservaPropiedad = () => {
   const { id } = useParams();

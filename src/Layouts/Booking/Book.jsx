@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApi } from "../../Services/Apis";
-import { showAlert } from "../../components/AlertMessage";
+import { showAlert } from "../../Components/AlertMessage";
 import {
   Container,
   Typography,

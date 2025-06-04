@@ -1,11 +1,8 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const AlertMessage = () => {
-  return <ToastContainer toastClassName="custom-toast" />;
-};
-
-export const showAlert = (message, type = "info", duration = 3000) => {
+// Función utilitaria movida fuera del componente
+const showAlert = (message, type = "info", duration = 3000) => {
   const toastOptions = {
     autoClose: duration,
     position: "top-right",
@@ -26,4 +23,14 @@ export const showAlert = (message, type = "info", duration = 3000) => {
   }
 };
 
+// Componente React
+const AlertMessage = () => {
+  return <ToastContainer toastClassName="custom-toast" />;
+};
+
+// Asignar la función como propiedad estática del componente
+AlertMessage.showAlert = showAlert;
+
+// Exports compatibles con Fast Refresh
+export { showAlert };
 export default AlertMessage;

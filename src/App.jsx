@@ -1,8 +1,8 @@
 /* Importaciones */
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/Security/ProtectedRoute";
+import ProtectedRoute from "./Components/Security/ProtectedRoute";
 import NotFound from "./Layouts/Errors/NotFound";
-import AlertMessage from "./components/AlertMessage";
+import AlertMessage from "./Components/AlertMessage";
 import Home from "./Layouts/Home/Home";
 import DetallePropiedad from "./Layouts/Properties/DetallePropiedad";
 import ReservaPropiedad from "./Layouts/Properties/ReservarPropiedad";

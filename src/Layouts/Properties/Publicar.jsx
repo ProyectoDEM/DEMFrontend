@@ -24,7 +24,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../Services/Apis";
-import { showAlert } from "../../components/AlertMessage";
+import { showAlert } from "../../Components/AlertMessage";
 
 const MarcadorUbicacion = ({ onSelect }) => {
   useMapEvents({

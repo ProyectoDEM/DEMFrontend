@@ -15,8 +15,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../Services/Apis";
-import { showAlert } from "../../components/AlertMessage";
-import NavigationBar from "../../components/NavigationBar";
+import { showAlert } from "../../Components/AlertMessage";
+import NavigationBar from "../../Components/NavigationBar";
 
 const MiCuenta = () => {
   const navigate = useNavigate();

@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { showAlert } from "../../components/AlertMessage";
+import { showAlert } from "../../Components/AlertMessage";
 import { useNavigate } from "react-router-dom";
 import DEMLogo from "../../assets/DEMLogo.png";
 import { useApi } from "../../Services/Apis";

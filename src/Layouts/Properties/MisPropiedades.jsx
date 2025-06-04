@@ -10,6 +10,7 @@ import {
   CardMedia,
   IconButton,
   Stack,
+  Chip,
 } from "@mui/material";
 import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -92,21 +93,32 @@ const MisPropiedades = () => {
         ) : (
           <Grid container spacing={3}>
             {propiedades.map((prop) => (
-              <Grid item xs={12} sm={6} md={4} key={prop.id}>
+              <Grid item xs={12} sm={6} md={4} key={prop.propiedadId}>
                 <Card>
-                  {prop.imagenUrl && (
+                  {prop.imagenBase64 && (
                     <CardMedia
                       component="img"
                       height="180"
-                      image={prop.imagenUrl}
+                      image={prop.imagenBase64}
                       alt={prop.titulo}
                     />
                   )}
                   <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      {prop.titulo}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography variant="h6">{prop.titulo}</Typography>
+                      <Chip
+                        label={
+                          prop.disponibilidad ? "Disponible" : "No disponible"
+                        }
+                        color={prop.disponibilidad ? "success" : "default"}
+                        size="small"
+                      />
+                    </Box>
+                    <Typography variant="body2" color="text.secondary" mt={1}>
                       {prop.descripcion}
                     </Typography>
                     <Typography variant="body2" mt={1}>
@@ -116,13 +128,13 @@ const MisPropiedades = () => {
                     <Stack direction="row" spacing={1} mt={2}>
                       <IconButton
                         color="primary"
-                        onClick={() => handleEditar(prop.id)}
+                        onClick={() => handleEditar(prop.propiedadId)}
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton
                         color="error"
-                        onClick={() => handleEliminar(prop.id)}
+                        onClick={() => handleEliminar(prop.propiedadId)}
                       >
                         <DeleteIcon />
                       </IconButton>

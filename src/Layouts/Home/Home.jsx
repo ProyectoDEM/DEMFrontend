@@ -16,6 +16,7 @@ import {
   Slider,
   TextField,
   InputAdornment,
+  Chip,
 } from "@mui/material";
 import {
   styled,
@@ -253,23 +254,41 @@ const Home = () => {
                     {prop.ciudad}, {prop.pais} - {prop.tipoPropiedadDescripcion}
                   </Typography>
                 </CardContent>
+
                 <CardActions
-                  sx={{ justifyContent: "space-between", px: 2, pb: 1 }}
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    px: 2,
+                    pb: 1,
+                  }}
                 >
                   <Typography variant="body2">
                     ${prop.precioPorNoche} / noche
                   </Typography>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ borderRadius: "12px", fontSize: "0.75rem" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReservar(prop.propiedadId);
-                    }}
-                  >
-                    Reservar
-                  </Button>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Chip
+                      label={
+                        prop.disponibilidad ? "Disponible" : "No disponible"
+                      }
+                      color={prop.disponibilidad ? "success" : "default"}
+                      size="small"
+                      sx={{
+                        marginLeft: 1,
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{ borderRadius: "12px", fontSize: "0.75rem" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleReservar(prop.propiedadId);
+                      }}
+                    >
+                      Reservar
+                    </Button>
+                  </Box>
                 </CardActions>
               </StyledCard>
             </Grid>

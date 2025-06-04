@@ -9,6 +9,7 @@ import ReservaPropiedad from "./Layouts/Properties/ReservarPropiedad";
 import AuthModal from "./Layouts/Auth/AuthModal";
 import MiCuenta from "./Layouts/Account/MiCuenta";
 import Publicar from "./Layouts/Properties/Publicar";
+import MisPropiedades from "./Layouts/Properties/MisPropiedades"; // o la ruta correcta
 /* Fin Importaciones */
 
 const App = () => {
@@ -44,6 +45,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/mis-propiedades"
+          element={
+            <ProtectedRoute>
+              <MisPropiedades />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </Router>

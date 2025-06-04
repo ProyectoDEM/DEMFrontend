@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Button, Box, Container } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  Container,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
+import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
 import { showAlert } from "./AlertMessage";
 import AuthModal from "../Layouts/Auth/AuthModal";
 import { useApi } from "../Services/Apis";
@@ -47,16 +56,14 @@ const NavigationBar = ({ logo }) => {
     };
 
     fetchSessionData();
+
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [userInfo]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("nombre1");
-    localStorage.removeItem("apellido1");
-    localStorage.removeItem("email");
+    localStorage.clear();
     setUserInfo(null);
     showAlert("Sesión cerrada exitosamente", "info");
     navigate("/");
@@ -86,6 +93,10 @@ const NavigationBar = ({ logo }) => {
     }
   };
 
+  const handleGestionarClick = () => {
+    navigate("/mis-propiedades");
+  };
+
   return (
     <>
       <AppBar
@@ -112,11 +123,23 @@ const NavigationBar = ({ logo }) => {
             <Box display="flex" alignItems="center" gap={2}>
               <Button
                 color="inherit"
+                startIcon={<AddHomeWorkIcon />}
                 onClick={handlePublicarClick}
                 sx={{ textTransform: "none" }}
               >
                 Publicar alojamiento
               </Button>
+
+              {userInfo && (
+                <Button
+                  color="inherit"
+                  startIcon={<HomeWorkIcon />}
+                  onClick={handleGestionarClick}
+                  sx={{ textTransform: "none" }}
+                >
+                  Gestionar propiedades
+                </Button>
+              )}
 
               {userInfo ? (
                 <>

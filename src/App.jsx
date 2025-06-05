@@ -10,12 +10,14 @@ import AuthModal from "./Layouts/Auth/AuthModal";
 import MiCuenta from "./Layouts/Account/MiCuenta";
 import Publicar from "./Layouts/Properties/Publicar";
 import MisPropiedades from "./Layouts/Properties/MisPropiedades"; // o la ruta correcta
+import TokenRefresher from "./Components/Security/TokenRefresher";
 /* Fin Importaciones */
 
 const App = () => {
   return (
     <Router>
       <AlertMessage />
+      <TokenRefresher />
       <AuthModal open={false} onClose={() => {}} />
       <Routes>
         <Route path="/" element={<Home />} />

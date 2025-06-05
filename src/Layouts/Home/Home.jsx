@@ -115,6 +115,15 @@ const Home = () => {
     fetchPropiedades();
   }, []);
 
+  const limpiarFiltros = () => {
+    setFiltroTipo("");
+    setBusqueda("");
+    setCapacidad("");
+    setHabitaciones("");
+    setBanos("");
+    setRangoPrecio([precioMin, precioMax]);
+  };
+
   const propiedadesFiltradas = propiedades.filter(
     (prop) =>
       (!filtroTipo || prop.tipoPropiedadDescripcion === filtroTipo) &&
@@ -150,7 +159,11 @@ const Home = () => {
           <TextField
             placeholder="Buscar..."
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 100) setBusqueda(value);
+            }}
+            inputProps={{ maxLength: 100 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -177,7 +190,11 @@ const Home = () => {
             placeholder="Personas"
             type="number"
             value={capacidad}
-            onChange={(e) => setCapacidad(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value || 1));
+              setCapacidad(value.toString());
+            }}
+            inputProps={{ min: 1 }}
             size="small"
             InputProps={{
               startAdornment: (
@@ -192,7 +209,11 @@ const Home = () => {
             placeholder="Habitaciones"
             type="number"
             value={habitaciones}
-            onChange={(e) => setHabitaciones(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value || 1));
+              setHabitaciones(value.toString());
+            }}
+            inputProps={{ min: 1 }}
             size="small"
             InputProps={{
               startAdornment: (
@@ -207,7 +228,11 @@ const Home = () => {
             placeholder="Baños"
             type="number"
             value={banos}
-            onChange={(e) => setBanos(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value || 1));
+              setBanos(value.toString());
+            }}
+            inputProps={{ min: 1 }}
             size="small"
             InputProps={{
               startAdornment: (
@@ -231,6 +256,23 @@ const Home = () => {
               size="small"
             />
           </Box>
+
+          {(filtroTipo ||
+            busqueda ||
+            capacidad ||
+            habitaciones ||
+            banos ||
+            rangoPrecio[0] !== precioMin ||
+            rangoPrecio[1] !== precioMax) && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={limpiarFiltros}
+              sx={{ gridColumn: "1 / -1", justifySelf: "end" }}
+            >
+              Limpiar filtros
+            </Button>
+          )}
         </FilterBar>
 
         <Grid container spacing={3}>

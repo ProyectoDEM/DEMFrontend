@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -57,10 +57,12 @@ import NavigationBar from "../../Components/NavigationBar";
 import { useApi } from "../../Services/Apis";
 
 const DetallePropiedad = () => {
+  const location = useLocation();
+  const propiedadInicial = location.state?.propiedad;
+  const [propiedad, setPropiedad] = useState(propiedadInicial);
   const { id } = useParams();
   const navigate = useNavigate();
   const { getRequest, postRequest } = useApi();
-  const [propiedad, setPropiedad] = useState(null);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [cantidadPersonas, setCantidadPersonas] = useState(1);
@@ -88,29 +90,32 @@ const DetallePropiedad = () => {
   const [loadingMetodosPago, setLoadingMetodosPago] = useState(false);
 
   useEffect(() => {
-    const fetchPropiedad = async () => {
-      try {
-        const { data } = await getRequest("/api/propiedad/propiedades");
-        const propiedadData = data.propiedades.find(
-          (p) => p.propiedadId.toString() === id
-        );
-        setPropiedad(propiedadData);
+    if (propiedadInicial) {
+      // Ya se pasó la propiedad, no es necesario hacer fetch
+      fetchResenas(propiedadInicial.propiedadId);
+      fetchMisReservas(propiedadInicial.propiedadId);
+      fetchMetodosPago();
+    } else {
+      // Backup: hacer fetch si por alguna razón no vino la propiedad
+      const fetchPropiedad = async () => {
+        try {
+          const { data } = await getRequest("/api/propiedad/propiedades");
+          const propiedadData = data.propiedades.find(
+            (p) => p.propiedadId.toString() === id
+          );
+          setPropiedad(propiedadData);
 
-        // Cargar reseñas (simuladas por ahora)
-        fetchResenas(propiedadData.propiedadId);
+          fetchResenas(propiedadData.propiedadId);
+          fetchMisReservas(propiedadData.propiedadId);
+          fetchMetodosPago();
+        } catch (err) {
+          console.error("❌ Error al cargar propiedad:", err);
+          showSnackbar("Error al cargar la propiedad", "error");
+        }
+      };
 
-        // Cargar reservas del usuario para esta propiedad
-        fetchMisReservas(propiedadData.propiedadId);
-
-        // Cargar métodos de pago
-        fetchMetodosPago();
-      } catch (err) {
-        console.error("❌ Error al cargar propiedad:", err);
-        showSnackbar("Error al cargar la propiedad", "error");
-      }
-    };
-
-    fetchPropiedad();
+      fetchPropiedad();
+    }
   }, [id]);
 
   const showSnackbar = (message, severity = "info") => {

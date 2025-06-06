@@ -179,7 +179,8 @@ const Home = () => {
   };
 
   const handleCardClick = (id) => {
-    navigate(`/propiedad/${id}`);
+    const propiedad = propiedades.find((p) => p.propiedadId === id);
+    navigate(`/propiedad/${id}`, { state: { propiedad } });
   };
 
   return (

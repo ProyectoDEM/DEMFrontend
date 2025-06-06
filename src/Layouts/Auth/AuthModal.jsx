@@ -56,7 +56,7 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
     const payload = isLogin
       ? {
           email: formData.email,
-          contrasenaHash: formData.password,
+          contrasenaHash: formData.password, // el backend espera "contrasenaHash"
         }
       : {
           email: formData.email,
@@ -68,20 +68,28 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
 
     try {
       const res = await postRequest(url, payload);
+
       if (isLogin) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("nombre1", res.data.nombre1 || "Usuario");
-        localStorage.setItem("apellido1", res.data.apellido1 || "");
-        showAlert("Bienvenido", "success");
-        navigate("/");
-        if (onSuccess) {
-          onSuccess({
-            token: res.data.token,
-            nombre1: res.data.nombre1 || "Usuario",
-            apellido1: res.data.apellido1 || "",
-          });
+        const token = res.data.token;
+        const detalleUsuario = res.data.detalleUsuario || {};
+        const nombre1 = detalleUsuario.nombre1 || "Usuario";
+        const apellido1 = detalleUsuario.apellido1 || "";
+
+        if (token) {
+          localStorage.setItem("token", token);
+          localStorage.setItem("nombre1", nombre1);
+          localStorage.setItem("apellido1", apellido1);
+          showAlert("Bienvenido", "success");
+          navigate("/");
+
+          if (onSuccess) {
+            onSuccess({ token, nombre1, apellido1 });
+          }
+
+          onClose();
+        } else {
+          showAlert("Inicio de sesión fallido.", "error");
         }
-        onClose();
       } else {
         showAlert("Cuenta creada con éxito", "success");
         setIsLogin(true);

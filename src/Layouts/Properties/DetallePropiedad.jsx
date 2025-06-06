@@ -1080,33 +1080,7 @@ const DetallePropiedad = () => {
               inputProps={{ maxLength: 500 }}
             />
 
-            {/* Información de debug */}
-            <Box sx={{ p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
-              <Typography variant="caption" color="text.secondary">
-                Debug Info:
-              </Typography>
-              <Typography
-                variant="caption"
-                display="block"
-                color="text.secondary"
-              >
-                Propiedad ID: {reviewDialog.propiedadId}
-              </Typography>
-              <Typography
-                variant="caption"
-                display="block"
-                color="text.secondary"
-              >
-                Reserva ID: {reviewDialog.reservaId}
-              </Typography>
-              <Typography
-                variant="caption"
-                display="block"
-                color="text.secondary"
-              >
-                Calificación: {reviewDialog.calificacion}
-              </Typography>
-            </Box>
+           
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>

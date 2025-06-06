@@ -385,7 +385,7 @@ const DetallePropiedad = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       showSnackbar("Debes iniciar sesión para reservar", "warning");
-      navigate("/");
+      //navigate("/");
       return;
     }
 

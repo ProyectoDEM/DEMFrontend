@@ -1,0 +1,41 @@
+name: Deploy React Frontend to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Configure gcloud project
+      run: gcloud config set project instant-medium-460400-h2
+
+    - name: Build and push Docker image to Artifact Registry using Cloud Build
+      run: |
+        gcloud builds submit \
+          --tag us-central1-docker.pkg.dev/instant-medium-460400-h2/frontend-dem/frontend-dem-image
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy frontend-service \
+          --image us-central1-docker.pkg.dev/instant-medium-460400-h2/frontend-dem/frontend-dem-image \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated \
+          --port 80
+
+

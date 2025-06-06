@@ -573,11 +573,7 @@ const DetallePropiedad = () => {
                     icon={<CommentIcon />}
                     iconPosition="start"
                   />
-                  <Tab
-                    label="Mis Reservas"
-                    icon={<EventIcon />}
-                    iconPosition="start"
-                  />
+                 
                 </Tabs>
                 <Button
                   variant="contained"

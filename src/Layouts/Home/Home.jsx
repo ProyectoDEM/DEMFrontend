@@ -34,14 +34,7 @@ import AuthModal from "../Auth/AuthModal";
 import { useApi } from "../../Services/Apis";
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#ff385c",
-    },
-    secondary: {
-      main: "#008489",
-    },
-  },
+ 
   typography: {
     fontFamily: "'Inter', sans-serif",
     fontSize: 13,

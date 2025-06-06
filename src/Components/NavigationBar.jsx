@@ -74,7 +74,7 @@ const NavigationBar = ({ logo }) => {
     localStorage.setItem("nombre1", data.nombre1);
     localStorage.setItem("apellido1", data.apellido1);
     setUserInfo({ nombre: data.nombre1, apellido: data.apellido1 });
-    showAlert("Sesión iniciada correctamente", "success");
+    //showAlert("Sesión iniciada correctamente", "success");
     setOpenModal(false);
 
     if (pendingRedirect === "publicar") {

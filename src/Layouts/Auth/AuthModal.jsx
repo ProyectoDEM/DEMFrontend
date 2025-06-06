@@ -79,7 +79,7 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
           localStorage.setItem("token", token);
           localStorage.setItem("nombre1", nombre1);
           localStorage.setItem("apellido1", apellido1);
-          showAlert("Bienvenido", "success");
+          showAlert(detalleUsuario || "Bienvenido", "success");
           navigate("/");
 
           if (onSuccess) {
@@ -88,10 +88,10 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
 
           onClose();
         } else {
-          showAlert("Inicio de sesión fallido.", "error");
+          showAlert(detalleUsuario || "No se pudo iniciar sesión correctamente.", "error");
         }
       } else {
-        showAlert("Cuenta creada con éxito", "success");
+        showAlert(detalleUsuario || "Cuenta creada con éxito", "success");
         setIsLogin(true);
       }
     } catch (err) {

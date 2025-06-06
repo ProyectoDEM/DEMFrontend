@@ -112,7 +112,7 @@ const NavigationBar = ({ logo }) => {
         position="sticky"
         color="default"
         elevation={3}
-        sx={{ width: "100%", top: 0, left: 0, zIndex: 1300, backgroundColor: "#f44336" }}
+        sx={{ width: "100%", top: 0, left: 0, zIndex: 1300, backgroundColor: "#ff385c" }}
       >
         <Container maxWidth="lg">
           <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>

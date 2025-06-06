@@ -205,3 +205,13 @@ export const useApi = () => {
     clearCache,
   };
 };
+
+export const refreshTokenSilencioso = async () => {
+  try {
+    const response = await api.post("/api/sesion/actualizar-sesion", {});
+    return response;
+  } catch (error) {
+    console.error("❌ Error silencioso al refrescar token", error);
+    return null;
+  }
+};

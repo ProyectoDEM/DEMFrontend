@@ -7,8 +7,11 @@ import {
   Button,
   Box,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { showAlert } from "../../Components/AlertMessage";
 import { useNavigate } from "react-router-dom";
 import DEMLogo from "../../assets/DEMLogo.png";
@@ -16,6 +19,7 @@ import { useApi } from "../../Services/Apis";
 
 const AuthModal = ({ open, onClose, onSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -52,7 +56,7 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
     const payload = isLogin
       ? {
           email: formData.email,
-          contrasenaHash: formData.password,
+          contrasenaHash: formData.password, // el backend espera "contrasenaHash"
         }
       : {
           email: formData.email,
@@ -64,22 +68,30 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
 
     try {
       const res = await postRequest(url, payload);
+
       if (isLogin) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("nombre1", res.data.nombre1 || "Usuario");
-        localStorage.setItem("apellido1", res.data.apellido1 || "");
-        showAlert("Bienvenido", "success");
-        navigate("/");
-        if (onSuccess) {
-          onSuccess({
-            token: res.data.token,
-            nombre1: res.data.nombre1 || "Usuario",
-            apellido1: res.data.apellido1 || "",
-          });
+        const token = res.data.token;
+        const detalleUsuario = res.data.detalleUsuario || {};
+        const nombre1 = detalleUsuario.nombre1 || "Usuario";
+        const apellido1 = detalleUsuario.apellido1 || "";
+
+        if (token) {
+          localStorage.setItem("token", token);
+          localStorage.setItem("nombre1", nombre1);
+          localStorage.setItem("apellido1", apellido1);
+          showAlert(detalleUsuario || "Bienvenido", "success");
+          navigate("/");
+
+          if (onSuccess) {
+            onSuccess({ token, nombre1, apellido1 });
+          }
+
+          onClose();
+        } else {
+          showAlert(detalleUsuario || "No se pudo iniciar sesión correctamente.", "error");
         }
-        onClose();
       } else {
-        showAlert("Cuenta creada con éxito", "success");
+        showAlert(detalleUsuario || "Cuenta creada con éxito", "success");
         setIsLogin(true);
       }
     } catch (err) {
@@ -197,10 +209,23 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
               fullWidth
               label="Contraseña"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               onChange={handleChange}
               variant="outlined"
               size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <Button

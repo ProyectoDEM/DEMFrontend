@@ -85,9 +85,18 @@ const ReservaPropiedad = () => {
     };
 
     try {
-      await postRequest("/api/reserva/crear", reservaData);
-      showAlert("Reserva realizada con éxito", "success");
-      navigate("/");
+      const response = await postRequest("/api/reserva/crear", reservaData);
+      if (response.status === 200) {
+        // Éxito
+        const detalleUsuario = response.data?.detalleUsuario;
+        showAlert(detalleUsuario || "Reserva realizada con éxito", "success");
+        navigate("/");
+      } else {
+        // Error (ej. 400 Bad Request)
+        const detalleUsuario = response.data?.detalleUsuario || "Error al crear la reserva";
+        showAlert(detalleUsuario, "error");
+        // Aquí NO navegas, permitiendo que el usuario corrija en la misma página
+      }
     } catch (error) {
       if (error?.response?.data?.detalleUsuario) {
         showAlert(error.response.data.detalleUsuario, "error");

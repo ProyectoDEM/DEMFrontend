@@ -34,14 +34,7 @@ import AuthModal from "../Auth/AuthModal";
 import { useApi } from "../../Services/Apis";
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#ff385c",
-    },
-    secondary: {
-      main: "#008489",
-    },
-  },
+ 
   typography: {
     fontFamily: "'Inter', sans-serif",
     fontSize: 13,
@@ -85,6 +78,8 @@ const Home = () => {
   const [precioMax, setPrecioMax] = useState(999999);
   const [rangoPrecio, setRangoPrecio] = useState([0, 999999]);
   const [propiedades, setPropiedades] = useState([]);
+  const [visiblePropiedades, setVisiblePropiedades] = useState([]);
+  const [itemsToShow, setItemsToShow] = useState(6);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [pendingReservationId, setPendingReservationId] = useState(null);
 
@@ -101,19 +96,32 @@ const Home = () => {
           return;
         }
 
-        const precios = response.data.propiedades.map((p) => p.precioPorNoche);
+        const propiedadesData = response.data.propiedades;
+        setPropiedades(propiedadesData);
+        setVisiblePropiedades(propiedadesData.slice(0, 6));
+
+        const precios = propiedadesData.map((p) => p.precioPorNoche);
         const min = Math.min(...precios);
         const max = Math.max(...precios);
         setPrecioMin(min);
         setPrecioMax(max);
         setRangoPrecio([min, max]);
-        setPropiedades(response.data.propiedades);
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
       }
     };
+
     fetchPropiedades();
   }, []);
+
+  const limpiarFiltros = () => {
+    setFiltroTipo("");
+    setBusqueda("");
+    setCapacidad("");
+    setHabitaciones("");
+    setBanos("");
+    setRangoPrecio([precioMin, precioMax]);
+  };
 
   const propiedadesFiltradas = propiedades.filter(
     (prop) =>
@@ -127,6 +135,31 @@ const Home = () => {
       prop.precioPorNoche <= rangoPrecio[1]
   );
 
+  useEffect(() => {
+    const filtradas = propiedades.filter(
+      (prop) =>
+        (!filtroTipo || prop.tipoPropiedadDescripcion === filtroTipo) &&
+        (prop.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
+          prop.descripcion.toLowerCase().includes(busqueda.toLowerCase())) &&
+        (!capacidad || prop.capacidadMaxima >= parseInt(capacidad)) &&
+        (!habitaciones || prop.habitaciones >= parseInt(habitaciones)) &&
+        (!banos || prop.banos >= parseInt(banos)) &&
+        prop.precioPorNoche >= rangoPrecio[0] &&
+        prop.precioPorNoche <= rangoPrecio[1]
+    );
+
+    setVisiblePropiedades(filtradas.slice(0, itemsToShow));
+  }, [
+    propiedades,
+    filtroTipo,
+    busqueda,
+    capacidad,
+    habitaciones,
+    banos,
+    rangoPrecio,
+    itemsToShow,
+  ]);
+
   const handleReservar = (id) => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -139,7 +172,8 @@ const Home = () => {
   };
 
   const handleCardClick = (id) => {
-    navigate(`/propiedad/${id}`);
+    const propiedad = propiedades.find((p) => p.propiedadId === id);
+    navigate(`/propiedad/${id}`, { state: { propiedad } });
   };
 
   return (
@@ -150,7 +184,11 @@ const Home = () => {
           <TextField
             placeholder="Buscar..."
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 100) setBusqueda(value);
+            }}
+            inputProps={{ maxLength: 100 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -177,7 +215,11 @@ const Home = () => {
             placeholder="Personas"
             type="number"
             value={capacidad}
-            onChange={(e) => setCapacidad(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value || 1));
+              setCapacidad(value.toString());
+            }}
+            inputProps={{ min: 1 }}
             size="small"
             InputProps={{
               startAdornment: (
@@ -192,7 +234,11 @@ const Home = () => {
             placeholder="Habitaciones"
             type="number"
             value={habitaciones}
-            onChange={(e) => setHabitaciones(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value || 1));
+              setHabitaciones(value.toString());
+            }}
+            inputProps={{ min: 1 }}
             size="small"
             InputProps={{
               startAdornment: (
@@ -207,7 +253,11 @@ const Home = () => {
             placeholder="Baños"
             type="number"
             value={banos}
-            onChange={(e) => setBanos(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value || 1));
+              setBanos(value.toString());
+            }}
+            inputProps={{ min: 1 }}
             size="small"
             InputProps={{
               startAdornment: (
@@ -231,10 +281,27 @@ const Home = () => {
               size="small"
             />
           </Box>
+
+          {(filtroTipo ||
+            busqueda ||
+            capacidad ||
+            habitaciones ||
+            banos ||
+            rangoPrecio[0] !== precioMin ||
+            rangoPrecio[1] !== precioMax) && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={limpiarFiltros}
+              sx={{ gridColumn: "1 / -1", justifySelf: "end" }}
+            >
+              Limpiar filtros
+            </Button>
+          )}
         </FilterBar>
 
         <Grid container spacing={3}>
-          {propiedadesFiltradas.map((prop) => (
+          {visiblePropiedades.map((prop) => (
             <Grid item key={prop.propiedadId} xs={12} sm={6} md={4}>
               <StyledCard onClick={() => handleCardClick(prop.propiedadId)}>
                 <CardMedia
@@ -294,6 +361,20 @@ const Home = () => {
             </Grid>
           ))}
         </Grid>
+
+        {visiblePropiedades.length < propiedadesFiltradas.length && (
+          <Box mt={4} textAlign="center">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                const next = itemsToShow + 6;
+                setItemsToShow(next);
+              }}
+            >
+              Ver más propiedades
+            </Button>
+          </Box>
+        )}
       </Container>
 
       <AuthModal

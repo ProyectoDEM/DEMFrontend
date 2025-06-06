@@ -1,7 +1,5 @@
-"use client"
-
-import React, { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -37,41 +35,41 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
-} from "@mui/material"
-import PaymentIcon from "@mui/icons-material/Payment"
-import CreditCardIcon from "@mui/icons-material/CreditCard"
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"
-import EventIcon from "@mui/icons-material/Event"
-import PeopleIcon from "@mui/icons-material/People"
-import BathtubIcon from "@mui/icons-material/Bathtub"
-import BedIcon from "@mui/icons-material/Bed"
-import HotelIcon from "@mui/icons-material/Hotel"
-import GroupIcon from "@mui/icons-material/Group"
-import CategoryIcon from "@mui/icons-material/Category"
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn"
-import RoomIcon from "@mui/icons-material/Room"
-import StarBorderIcon from "@mui/icons-material/StarBorder"
-import CommentIcon from "@mui/icons-material/Comment"
-import RateReviewIcon from "@mui/icons-material/RateReview"
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import NavigationBar from "../../Components/NavigationBar"
-import { useApi } from "../../Services/Apis"
+} from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EventIcon from "@mui/icons-material/Event";
+import PeopleIcon from "@mui/icons-material/People";
+import BathtubIcon from "@mui/icons-material/Bathtub";
+import BedIcon from "@mui/icons-material/Bed";
+import HotelIcon from "@mui/icons-material/Hotel";
+import GroupIcon from "@mui/icons-material/Group";
+import CategoryIcon from "@mui/icons-material/Category";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import RoomIcon from "@mui/icons-material/Room";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import CommentIcon from "@mui/icons-material/Comment";
+import RateReviewIcon from "@mui/icons-material/RateReview";
+import AddCommentIcon from "@mui/icons-material/AddComment";
+import NavigationBar from "../../Components/NavigationBar";
+import { useApi } from "../../Services/Apis";
 
 const DetallePropiedad = () => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const { getRequest, postRequest } = useApi()
-  const [propiedad, setPropiedad] = useState(null)
-  const [fechaInicio, setFechaInicio] = useState("")
-  const [fechaFin, setFechaFin] = useState("")
-  const [cantidadPersonas, setCantidadPersonas] = useState(1)
-  const [errors, setErrors] = useState({})
-  const [tabValue, setTabValue] = useState(0)
-  const [resenas, setResenas] = useState([])
-  const [misReservas, setMisReservas] = useState([])
-  const [loadingResenas, setLoadingResenas] = useState(false)
-  const [loadingReservas, setLoadingReservas] = useState(false)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { getRequest, postRequest } = useApi();
+  const [propiedad, setPropiedad] = useState(null);
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [cantidadPersonas, setCantidadPersonas] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [tabValue, setTabValue] = useState(0);
+  const [resenas, setResenas] = useState([]);
+  const [misReservas, setMisReservas] = useState([]);
+  const [loadingResenas, setLoadingResenas] = useState(false);
+  const [loadingReservas, setLoadingReservas] = useState(false);
   const [reviewDialog, setReviewDialog] = useState({
     open: false,
     reservaId: null,
@@ -79,159 +77,154 @@ const DetallePropiedad = () => {
     calificacion: 0,
     comentario: "",
     loading: false,
-  })
+  });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "info",
-  })
-  const [metodosPago, setMetodosPago] = useState([])
-  const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = useState("")
-  const [loadingMetodosPago, setLoadingMetodosPago] = useState(false)
+  });
+  const [metodosPago, setMetodosPago] = useState([]);
+  const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = useState("");
+  const [loadingMetodosPago, setLoadingMetodosPago] = useState(false);
 
   useEffect(() => {
     const fetchPropiedad = async () => {
       try {
-        const { data } = await getRequest("/api/propiedad/propiedades")
-        const propiedadData = data.propiedades.find((p) => p.propiedadId.toString() === id)
-        setPropiedad(propiedadData)
+        const { data } = await getRequest("/api/propiedad/propiedades");
+        const propiedadData = data.propiedades.find(
+          (p) => p.propiedadId.toString() === id
+        );
+        setPropiedad(propiedadData);
 
         // Cargar reseñas (simuladas por ahora)
-        fetchResenas(propiedadData.propiedadId)
+        fetchResenas(propiedadData.propiedadId);
 
         // Cargar reservas del usuario para esta propiedad
-        fetchMisReservas(propiedadData.propiedadId)
+        fetchMisReservas(propiedadData.propiedadId);
 
         // Cargar métodos de pago
-        fetchMetodosPago()
+        fetchMetodosPago();
       } catch (err) {
-        console.error("❌ Error al cargar propiedad:", err)
-        showSnackbar("Error al cargar la propiedad", "error")
+        console.error("❌ Error al cargar propiedad:", err);
+        showSnackbar("Error al cargar la propiedad", "error");
       }
-    }
+    };
 
-    fetchPropiedad()
-  }, [id])
+    fetchPropiedad();
+  }, [id]);
 
   const showSnackbar = (message, severity = "info") => {
     setSnackbar({
       open: true,
       message,
       severity,
-    })
-  }
+    });
+  };
 
   const handleCloseSnackbar = () => {
     setSnackbar({
       ...snackbar,
       open: false,
-    })
-  }
+    });
+  };
 
   const fetchMetodosPago = async () => {
-    setLoadingMetodosPago(true)
+    setLoadingMetodosPago(true);
     try {
-      const response = await getRequest("/api/reserva/listar-metodos-pago")
-      console.log("Métodos de pago obtenidos:", response)
+      const response = await getRequest("/api/reserva/listar-metodos-pago");
+      console.log("Métodos de pago obtenidos:", response);
 
       if (response && response.data && response.data.metodosPago) {
-        setMetodosPago(response.data.metodosPago)
+        setMetodosPago(response.data.metodosPago);
         // Seleccionar el primer método por defecto
         if (response.data.metodosPago.length > 0) {
-          setMetodoPagoSeleccionado(response.data.metodosPago[0].metodoPagoId)
+          setMetodoPagoSeleccionado(response.data.metodosPago[0].metodoPagoId);
         }
       } else {
-        setMetodosPago([])
-        showSnackbar("No se pudieron cargar los métodos de pago", "warning")
+        setMetodosPago([]);
+        showSnackbar("No se pudieron cargar los métodos de pago", "warning");
       }
     } catch (error) {
-      console.error("Error al cargar métodos de pago:", error)
-      setMetodosPago([])
-      showSnackbar("Error al cargar los métodos de pago", "error")
+      console.error("Error al cargar métodos de pago:", error);
+      setMetodosPago([]);
+      showSnackbar("Error al cargar los métodos de pago", "error");
     } finally {
-      setLoadingMetodosPago(false)
+      setLoadingMetodosPago(false);
     }
-  }
+  };
 
   const fetchResenas = async (propiedadId) => {
-    setLoadingResenas(true)
+    setLoadingResenas(true);
     try {
-      // Por ahora usamos reseñas simuladas ya que no tenemos el endpoint de listar
-      // En un futuro real, usarías: await getRequest(`/api/resena/listar/${propiedadId}`)
+      const response = await getRequest(
+        `/api/resena/listar-resenas/${propiedadId}`
+      );
 
-      // Simulamos algunas reseñas de ejemplo
-      const resenasEjemplo = [
-        {
-          resenaId: 1,
-          usuarioNombre: "María García",
-          calificacion: 5,
-          comentario: "Excelente lugar, muy cómodo y limpio. La ubicación es perfecta.",
-          fechaCreacion: "2024-01-15T10:30:00",
-        },
-        {
-          resenaId: 2,
-          usuarioNombre: "Carlos López",
-          calificacion: 4,
-          comentario: "Muy buena experiencia, solo faltaba un poco más de iluminación en la sala.",
-          fechaCreacion: "2024-01-10T14:20:00",
-        },
-      ]
-
-      setResenas(resenasEjemplo)
+      console.log("RESPONSE RESENA", response);
+      if (response?.data?.resenas) {
+        setResenas(response.data.resenas);
+      } else {
+        setResenas([]);
+      }
     } catch (error) {
-      console.error("Error al cargar reseñas:", error)
-      setResenas([])
+      console.error("Error al cargar reseñas:", error);
+      setResenas([]);
     } finally {
-      setLoadingResenas(false)
+      setLoadingResenas(false);
     }
-  }
+  };
 
   const fetchMisReservas = async (propiedadId) => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (!token) {
-      console.log("No hay token, no se pueden cargar reservas")
-      return
+      console.log("No hay token, no se pueden cargar reservas");
+      return;
     }
 
-    setLoadingReservas(true)
+    setLoadingReservas(true);
     try {
       // Obtener las reservas del usuario
-      const response = await getRequest("/api/reserva/listar-reservas/2")
-      console.log("Respuesta de reservas:", response)
+      const response = await getRequest("/api/reserva/listar-reservas/2");
+      console.log("Respuesta de reservas:", response);
 
       if (response && response.data && response.data.reservas) {
         // Filtrar solo las reservas de esta propiedad
-        const reservasPropiedad = response.data.reservas.filter((r) => r.propiedadId === Number.parseInt(propiedadId))
-        console.log("Reservas filtradas para esta propiedad:", reservasPropiedad)
-        setMisReservas(reservasPropiedad)
+        const reservasPropiedad = response.data.reservas.filter(
+          (r) => r.propiedadId === Number.parseInt(propiedadId)
+        );
+        console.log(
+          "Reservas filtradas para esta propiedad:",
+          reservasPropiedad
+        );
+        setMisReservas(reservasPropiedad);
       } else {
-        console.log("No se encontraron reservas en la respuesta")
-        setMisReservas([])
+        console.log("No se encontraron reservas en la respuesta");
+        setMisReservas([]);
       }
     } catch (error) {
-      console.error("Error al cargar reservas:", error)
-      setMisReservas([])
+      console.error("Error al cargar reservas:", error);
+      setMisReservas([]);
     } finally {
-      setLoadingReservas(false)
+      setLoadingReservas(false);
     }
-  }
+  };
 
   const handleTabChange = (event, newValue) => {
-    setTabValue(newValue)
-  }
+    setTabValue(newValue);
+  };
 
   const handleOpenReviewDialog = (reservaId = null) => {
     // Si no hay reservaId específico, usar la primera reserva disponible o un ID por defecto
-    let selectedReservaId = reservaId
+    let selectedReservaId = reservaId;
 
     if (!selectedReservaId && misReservas.length > 0) {
-      selectedReservaId = misReservas[0].reservaId
+      selectedReservaId = misReservas[0].reservaId;
     } else if (!selectedReservaId) {
       // Si no hay reservas, usar un ID por defecto para testing
-      selectedReservaId = 1
+      selectedReservaId = 1;
     }
 
-    console.log("Abriendo dialog de reseña con reservaId:", selectedReservaId)
+    console.log("Abriendo dialog de reseña con reservaId:", selectedReservaId);
 
     setReviewDialog({
       open: true,
@@ -240,8 +233,8 @@ const DetallePropiedad = () => {
       calificacion: 0,
       comentario: "",
       loading: false,
-    })
-  }
+    });
+  };
 
   const handleCloseReviewDialog = () => {
     setReviewDialog({
@@ -251,44 +244,44 @@ const DetallePropiedad = () => {
       calificacion: 0,
       comentario: "",
       loading: false,
-    })
-  }
+    });
+  };
 
   const handleReviewChange = (field, value) => {
     setReviewDialog({
       ...reviewDialog,
       [field]: value,
-    })
-  }
+    });
+  };
 
   const handleSubmitReview = async () => {
-    console.log("Iniciando envío de reseña...")
+    console.log("Iniciando envío de reseña...");
 
     // Validar datos
     if (!reviewDialog.calificacion || reviewDialog.calificacion === 0) {
-      showSnackbar("Debes seleccionar una calificación", "error")
-      return
+      showSnackbar("Debes seleccionar una calificación", "error");
+      return;
     }
 
     if (!reviewDialog.comentario || reviewDialog.comentario.trim() === "") {
-      showSnackbar("Debes escribir un comentario", "error")
-      return
+      showSnackbar("Debes escribir un comentario", "error");
+      return;
     }
 
     if (!reviewDialog.propiedadId) {
-      showSnackbar("Error: No se pudo identificar la propiedad", "error")
-      return
+      showSnackbar("Error: No se pudo identificar la propiedad", "error");
+      return;
     }
 
     if (!reviewDialog.reservaId) {
-      showSnackbar("Error: No se pudo identificar la reserva", "error")
-      return
+      showSnackbar("Error: No se pudo identificar la reserva", "error");
+      return;
     }
 
     setReviewDialog({
       ...reviewDialog,
       loading: true,
-    })
+    });
 
     try {
       // Preparar los datos exactamente como los espera la API
@@ -297,24 +290,24 @@ const DetallePropiedad = () => {
         reservaId: Number.parseInt(reviewDialog.reservaId),
         calificacion: Number.parseInt(reviewDialog.calificacion),
         comentario: reviewDialog.comentario.trim(),
-      }
+      };
 
-      console.log("Datos de reseña a enviar:", reviewData)
-      console.log("URL de la API:", "/api/resena/crear")
+      console.log("Datos de reseña a enviar:", reviewData);
+      console.log("URL de la API:", "/api/resena/crear");
 
       // Verificar que tenemos token
-      const token = localStorage.getItem("token")
+      const token = localStorage.getItem("token");
       if (!token) {
-        showSnackbar("Debes iniciar sesión para dejar una reseña", "error")
-        return
+        showSnackbar("Debes iniciar sesión para dejar una reseña", "error");
+        return;
       }
 
-      console.log("Token encontrado, enviando petición...")
+      console.log("Token encontrado, enviando petición...");
 
       // Enviar reseña a la API
-      const response = await postRequest("/api/resena/crear", reviewData)
+      const response = await postRequest("/api/resena/crear", reviewData);
 
-      console.log("Respuesta de la API:", response)
+      console.log("Respuesta de la API:", response);
 
       // Agregar la nueva reseña a la lista local para mostrarla inmediatamente
       const nuevaResena = {
@@ -323,68 +316,71 @@ const DetallePropiedad = () => {
         calificacion: reviewData.calificacion,
         comentario: reviewData.comentario,
         fechaCreacion: new Date().toISOString(),
-      }
+      };
 
-      setResenas((prevResenas) => [nuevaResena, ...prevResenas])
+      setResenas((prevResenas) => [nuevaResena, ...prevResenas]);
 
-      showSnackbar("¡Reseña enviada correctamente!", "success")
-      handleCloseReviewDialog()
+      showSnackbar("¡Reseña enviada correctamente!", "success");
+      handleCloseReviewDialog();
 
       // Cambiar a la pestaña de reseñas para mostrar la nueva reseña
-      setTabValue(0)
+      setTabValue(0);
     } catch (error) {
-      console.error("Error completo al enviar reseña:", error)
-      console.error("Error response:", error?.response)
-      console.error("Error data:", error?.response?.data)
+      console.error("Error completo al enviar reseña:", error);
+      console.error("Error response:", error?.response);
+      console.error("Error data:", error?.response?.data);
 
-      let errorMessage = "Error al enviar la reseña. Intenta nuevamente."
+      let errorMessage = "Error al enviar la reseña. Intenta nuevamente.";
 
       if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message
+        errorMessage = error.response.data.message;
       } else if (error?.response?.data?.error) {
-        errorMessage = error.response.data.error
+        errorMessage = error.response.data.error;
       } else if (error?.response?.data?.detalleUsuario) {
-        errorMessage = error.response.data.detalleUsuario
+        errorMessage = error.response.data.detalleUsuario;
       } else if (error?.message) {
-        errorMessage = error.message
+        errorMessage = error.message;
       }
 
-      showSnackbar(errorMessage, "error")
+      showSnackbar(errorMessage, "error");
     } finally {
       setReviewDialog({
         ...reviewDialog,
         loading: false,
-      })
+      });
     }
-  }
+  };
 
-  const todayStr = new Date().toISOString().split("T")[0]
+  const todayStr = new Date().toISOString().split("T")[0];
 
   const handleReserva = async () => {
-    const hoy = new Date()
-    const inicio = new Date(fechaInicio)
-    const fin = new Date(fechaFin)
-    hoy.setHours(0, 0, 0, 0)
-    inicio.setHours(0, 0, 0, 0)
-    fin.setHours(0, 0, 0, 0)
+    const hoy = new Date();
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+    hoy.setHours(0, 0, 0, 0);
+    inicio.setHours(0, 0, 0, 0);
+    fin.setHours(0, 0, 0, 0);
 
-    const newErrors = {}
+    const newErrors = {};
 
-    if (!fechaInicio) newErrors.fechaInicio = "Seleccione una fecha válida."
-    if (!fechaFin) newErrors.fechaFin = "Seleccione una fecha válida."
-    if (inicio < hoy) newErrors.fechaInicio = "La fecha debe ser hoy o futura."
-    if (fin <= inicio) newErrors.fechaFin = "Debe ser posterior a la fecha de inicio."
-    if (!cantidadPersonas || cantidadPersonas < 1) newErrors.cantidadPersonas = "Debe ser al menos 1 persona."
-    if (!metodoPagoSeleccionado) newErrors.metodoPago = "Seleccione un método de pago."
+    if (!fechaInicio) newErrors.fechaInicio = "Seleccione una fecha válida.";
+    if (!fechaFin) newErrors.fechaFin = "Seleccione una fecha válida.";
+    if (inicio < hoy) newErrors.fechaInicio = "La fecha debe ser hoy o futura.";
+    if (fin <= inicio)
+      newErrors.fechaFin = "Debe ser posterior a la fecha de inicio.";
+    if (!cantidadPersonas || cantidadPersonas < 1)
+      newErrors.cantidadPersonas = "Debe ser al menos 1 persona.";
+    if (!metodoPagoSeleccionado)
+      newErrors.metodoPago = "Seleccione un método de pago.";
 
-    setErrors(newErrors)
-    if (Object.keys(newErrors).length > 0) return
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (!token) {
-      showSnackbar("Debes iniciar sesión para reservar", "warning")
-      navigate("/")
-      return
+      showSnackbar("Debes iniciar sesión para reservar", "warning");
+      navigate("/");
+      return;
     }
 
     const reservaData = {
@@ -393,59 +389,59 @@ const DetallePropiedad = () => {
       fechaFin,
       cantidadPersonas: Number.parseInt(cantidadPersonas),
       metodoPagoId: Number.parseInt(metodoPagoSeleccionado),
-    }
+    };
 
     try {
-      await postRequest("/api/reserva/crear", reservaData)
-      showSnackbar("Reserva realizada con éxito", "success")
-      navigate("/")
+      await postRequest("/api/reserva/crear", reservaData);
+      showSnackbar("Reserva realizada con éxito", "success");
+      navigate("/");
     } catch (error) {
       if (error?.response?.data?.detalleUsuario) {
-        showSnackbar(error.response.data.detalleUsuario, "error")
+        showSnackbar(error.response.data.detalleUsuario, "error");
       } else {
-        showSnackbar("Error al realizar la reserva", "error")
+        showSnackbar("Error al realizar la reserva", "error");
       }
     }
-  }
+  };
 
   // Función para formatear fecha
   const formatDate = (dateString) => {
-    if (!dateString) return ""
-    const date = new Date(dateString)
+    if (!dateString) return "";
+    const date = new Date(dateString);
     return date.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "short",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   // Función para obtener el color del estado de la reserva
   const getReservaStatusColor = (estado) => {
-    if (!estado) return "default"
+    if (!estado) return "default";
 
-    const estadoLower = estado.toLowerCase()
-    if (estadoLower.includes("confirmada")) return "success"
-    if (estadoLower.includes("completada")) return "primary"
-    if (estadoLower.includes("cancelada")) return "error"
-    if (estadoLower.includes("pendiente")) return "warning"
-    return "default"
-  }
+    const estadoLower = estado.toLowerCase();
+    if (estadoLower.includes("confirmada")) return "success";
+    if (estadoLower.includes("completada")) return "primary";
+    if (estadoLower.includes("cancelada")) return "error";
+    if (estadoLower.includes("pendiente")) return "warning";
+    return "default";
+  };
 
   const getPaymentIcon = (descripcion) => {
-    const desc = descripcion.toLowerCase()
+    const desc = descripcion.toLowerCase();
     if (desc.includes("tarjeta") || desc.includes("crédito")) {
-      return <CreditCardIcon fontSize="small" />
+      return <CreditCardIcon fontSize="small" />;
     }
     if (desc.includes("paypal")) {
-      return <PaymentIcon fontSize="small" />
+      return <PaymentIcon fontSize="small" />;
     }
     if (desc.includes("transferencia") || desc.includes("bancaria")) {
-      return <AccountBalanceIcon fontSize="small" />
+      return <AccountBalanceIcon fontSize="small" />;
     }
-    return <PaymentIcon fontSize="small" />
-  }
+    return <PaymentIcon fontSize="small" />;
+  };
 
-  if (!propiedad) return null
+  if (!propiedad) return null;
 
   return (
     <>
@@ -455,7 +451,11 @@ const DetallePropiedad = () => {
           <IconButton onClick={() => navigate(-1)} size="small">
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="body2" sx={{ ml: 1, cursor: "pointer" }} onClick={() => navigate(-1)}>
+          <Typography
+            variant="body2"
+            sx={{ ml: 1, cursor: "pointer" }}
+            onClick={() => navigate(-1)}
+          >
             Volver
           </Typography>
         </Box>
@@ -464,7 +464,10 @@ const DetallePropiedad = () => {
           <CardMedia
             component="img"
             height="250"
-            image={propiedad.imagenBase64 || "https://via.placeholder.com/400x300?text=Sin+imagen"}
+            image={
+              propiedad.imagenBase64 ||
+              "https://via.placeholder.com/400x300?text=Sin+imagen"
+            }
             alt="Imagen de la propiedad"
           />
           <CardContent>
@@ -495,37 +498,49 @@ const DetallePropiedad = () => {
                 <Paper elevation={1} sx={{ p: 2, flex: "1 1 200px" }}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <CategoryIcon fontSize="small" />
-                    <Typography variant="body2">{propiedad.tipoPropiedadDescripcion}</Typography>
+                    <Typography variant="body2">
+                      {propiedad.tipoPropiedadDescripcion}
+                    </Typography>
                   </Box>
                 </Paper>
                 <Paper elevation={1} sx={{ p: 2, flex: "1 1 200px" }}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <GroupIcon fontSize="small" />
-                    <Typography variant="body2">Capacidad: {propiedad.capacidadMaxima}</Typography>
+                    <Typography variant="body2">
+                      Capacidad: {propiedad.capacidadMaxima}
+                    </Typography>
                   </Box>
                 </Paper>
                 <Paper elevation={1} sx={{ p: 2, flex: "1 1 200px" }}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <HotelIcon fontSize="small" />
-                    <Typography variant="body2">Habitaciones: {propiedad.habitaciones}</Typography>
+                    <Typography variant="body2">
+                      Habitaciones: {propiedad.habitaciones}
+                    </Typography>
                   </Box>
                 </Paper>
                 <Paper elevation={1} sx={{ p: 2, flex: "1 1 200px" }}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <BedIcon fontSize="small" />
-                    <Typography variant="body2">Camas: {propiedad.camas}</Typography>
+                    <Typography variant="body2">
+                      Camas: {propiedad.camas}
+                    </Typography>
                   </Box>
                 </Paper>
                 <Paper elevation={1} sx={{ p: 2, flex: "1 1 200px" }}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <BathtubIcon fontSize="small" />
-                    <Typography variant="body2">Baños: {propiedad.banos}</Typography>
+                    <Typography variant="body2">
+                      Baños: {propiedad.banos}
+                    </Typography>
                   </Box>
                 </Paper>
                 <Paper elevation={1} sx={{ p: 2, flex: "1 1 200px" }}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <MonetizationOnIcon fontSize="small" />
-                    <Typography variant="body2">${propiedad.precioPorNoche} / noche</Typography>
+                    <Typography variant="body2">
+                      ${propiedad.precioPorNoche} / noche
+                    </Typography>
                   </Box>
                 </Paper>
               </Box>
@@ -533,15 +548,31 @@ const DetallePropiedad = () => {
 
             {/* Sección de reseñas y reservas */}
             <Paper elevation={1} sx={{ borderRadius: 2, mt: 3 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2, pt: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  px: 2,
+                  pt: 2,
+                }}
+              >
                 <Tabs
                   value={tabValue}
                   onChange={handleTabChange}
                   variant="standard"
                   sx={{ borderBottom: 1, borderColor: "divider" }}
                 >
-                  <Tab label="Reseñas" icon={<CommentIcon />} iconPosition="start" />
-                  <Tab label="Mis Reservas" icon={<EventIcon />} iconPosition="start" />
+                  <Tab
+                    label="Reseñas"
+                    icon={<CommentIcon />}
+                    iconPosition="start"
+                  />
+                  <Tab
+                    label="Mis Reservas"
+                    icon={<EventIcon />}
+                    iconPosition="start"
+                  />
                 </Tabs>
                 <Button
                   variant="contained"
@@ -562,56 +593,127 @@ const DetallePropiedad = () => {
                       <CircularProgress size={30} />
                     </Box>
                   ) : resenas.length > 0 ? (
-                    <List>
-                      {resenas.map((resena, index) => (
-                        <React.Fragment key={resena.resenaId || index}>
-                          <ListItem alignItems="flex-start" sx={{ px: 0 }}>
-                            <Box sx={{ width: "100%" }}>
-                              <Box display="flex" justifyContent="space-between" alignItems="center">
-                                <Box display="flex" alignItems="center">
-                                  <Avatar sx={{ bgcolor: "primary.main", width: 32, height: 32, mr: 1 }}>
-                                    {resena.usuarioNombre ? resena.usuarioNombre.charAt(0) : "U"}
-                                  </Avatar>
-                                  <Typography variant="subtitle2">{resena.usuarioNombre || "Usuario"}</Typography>
-                                </Box>
-                                <Rating
-                                  value={resena.calificacion}
-                                  readOnly
-                                  size="small"
-                                  emptyIcon={<StarBorderIcon fontSize="inherit" />}
-                                />
-                              </Box>
-                              <Typography variant="body2" sx={{ mt: 1, ml: 5 }}>
-                                {resena.comentario}
-                              </Typography>
+                    <>
+                      {/* Promedio general */}
+                      <Box display="flex" alignItems="center" gap={1} mb={2}>
+                        <Rating
+                          value={
+                            resenas.reduce(
+                              (sum, r) => sum + r.calificacion,
+                              0
+                            ) / resenas.length
+                          }
+                          precision={0.1}
+                          readOnly
+                          size="medium"
+                        />
+                        <Typography variant="body2" color="text.secondary">
+                          ({resenas.length} reseña
+                          {resenas.length > 1 ? "s" : ""})
+                        </Typography>
+                      </Box>
+
+                      {/* Distribución */}
+                      <Box mb={2}>
+                        {[5, 4, 3, 2, 1].map((star) => {
+                          const count = resenas.filter(
+                            (r) => r.calificacion === star
+                          ).length;
+                          return (
+                            <Box
+                              key={star}
+                              display="flex"
+                              alignItems="center"
+                              gap={1}
+                              mb={0.5}
+                            >
+                              <Rating value={star} readOnly size="small" />
                               <Typography
-                                variant="caption"
+                                variant="body2"
                                 color="text.secondary"
-                                sx={{ mt: 0.5, ml: 5, display: "block" }}
                               >
-                                {formatDate(resena.fechaCreacion)}
+                                {count} reseña{count !== 1 ? "s" : ""}
                               </Typography>
                             </Box>
-                          </ListItem>
-                          {index < resenas.length - 1 && <Divider component="li" />}
-                        </React.Fragment>
-                      ))}
-                    </List>
+                          );
+                        })}
+                      </Box>
+
+                      {/* Lista de reseñas */}
+                      <List>
+                        {resenas.map((resena, index) => (
+                          <React.Fragment key={resena.resenaId || index}>
+                            <ListItem alignItems="flex-start" sx={{ px: 0 }}>
+                              <Box sx={{ width: "100%" }}>
+                                <Box
+                                  display="flex"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                >
+                                  <Box display="flex" alignItems="center">
+                                    <Avatar
+                                      sx={{
+                                        bgcolor: "primary.main",
+                                        width: 32,
+                                        height: 32,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {resena.usuarioNombre?.charAt(0) || "U"}
+                                    </Avatar>
+                                    <Typography variant="subtitle2">
+                                      {resena.usuarioNombre || "Usuario"}{" "}
+                                      {resena.usuarioApellido || ""}
+                                    </Typography>
+                                  </Box>
+                                  <Rating
+                                    value={resena.calificacion}
+                                    readOnly
+                                    size="small"
+                                    emptyIcon={
+                                      <StarBorderIcon fontSize="inherit" />
+                                    }
+                                  />
+                                </Box>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ mt: 1, ml: 5 }}
+                                >
+                                  {resena.comentario}
+                                </Typography>
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  sx={{ mt: 0.5, ml: 5, display: "block" }}
+                                >
+                                  {formatDate(resena.fechaCreacion)}
+                                </Typography>
+                              </Box>
+                            </ListItem>
+                            {index < resenas.length - 1 && (
+                              <Divider component="li" />
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </List>
+                    </>
                   ) : (
                     <Box textAlign="center" py={3}>
-                      <CommentIcon sx={{ fontSize: 40, color: "text.secondary", mb: 1 }} />
+                      <CommentIcon
+                        sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
+                      />
                       <Typography variant="body1" color="text.secondary">
-                        Aún no hay reseñas para esta propiedad
+                        Por el momento no hay reseñas disponibles para esta
+                        propiedad.
                       </Typography>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        startIcon={<AddCommentIcon />}
-                        onClick={() => handleOpenReviewDialog()}
-                        sx={{ mt: 2, borderRadius: 2 }}
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 1 }}
                       >
-                        Sé el primero en dejar una reseña
-                      </Button>
+                        Sé el primero en compartir tu experiencia con otros
+                        viajeros.
+                      </Typography>
                     </Box>
                   )}
                 </Box>
@@ -630,29 +732,54 @@ const DetallePropiedad = () => {
                         <React.Fragment key={reserva.reservaId || index}>
                           <ListItem alignItems="flex-start" sx={{ px: 0 }}>
                             <Box sx={{ width: "100%" }}>
-                              <Box display="flex" justifyContent="space-between" alignItems="center">
+                              <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                              >
                                 <Chip
                                   label={reserva.estadoReservaDescripcion}
-                                  color={getReservaStatusColor(reserva.estadoReservaDescripcion)}
+                                  color={getReservaStatusColor(
+                                    reserva.estadoReservaDescripcion
+                                  )}
                                   size="small"
                                 />
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                >
                                   Reserva #{reserva.reservaId}
                                 </Typography>
                               </Box>
 
                               <Box sx={{ mt: 1 }}>
-                                <Typography variant="body2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
                                   <EventIcon fontSize="small" color="action" />
-                                  {formatDate(reserva.fechaInicio)} - {formatDate(reserva.fechaFin)}
+                                  {formatDate(reserva.fechaInicio)} -{" "}
+                                  {formatDate(reserva.fechaFin)}
                                 </Typography>
 
                                 <Typography
                                   variant="body2"
-                                  sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}
+                                  sx={{
+                                    mt: 0.5,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
                                 >
                                   <PeopleIcon fontSize="small" color="action" />
-                                  {reserva.cantidadPersonas} {reserva.cantidadPersonas === 1 ? "persona" : "personas"}
+                                  {reserva.cantidadPersonas}{" "}
+                                  {reserva.cantidadPersonas === 1
+                                    ? "persona"
+                                    : "personas"}
                                 </Typography>
                               </Box>
 
@@ -661,24 +788,34 @@ const DetallePropiedad = () => {
                                 variant="outlined"
                                 size="small"
                                 startIcon={<RateReviewIcon />}
-                                onClick={() => handleOpenReviewDialog(reserva.reservaId)}
+                                onClick={() =>
+                                  handleOpenReviewDialog(reserva.reservaId)
+                                }
                                 sx={{ mt: 1.5, borderRadius: 2 }}
                               >
                                 Dejar reseña
                               </Button>
                             </Box>
                           </ListItem>
-                          {index < misReservas.length - 1 && <Divider component="li" />}
+                          {index < misReservas.length - 1 && (
+                            <Divider component="li" />
+                          )}
                         </React.Fragment>
                       ))}
                     </List>
                   ) : (
                     <Box textAlign="center" py={3}>
-                      <EventIcon sx={{ fontSize: 40, color: "text.secondary", mb: 1 }} />
+                      <EventIcon
+                        sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
+                      />
                       <Typography variant="body1" color="text.secondary">
                         No tienes reservas para esta propiedad
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 1 }}
+                      >
                         Puedes dejar una reseña usando el botón de arriba
                       </Typography>
                     </Box>
@@ -757,60 +894,105 @@ const DetallePropiedad = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <FormControl fullWidth error={Boolean(errors.metodoPago)} disabled={loadingMetodosPago}>
+                  <FormControl
+                    fullWidth
+                    error={Boolean(errors.metodoPago)}
+                    disabled={loadingMetodosPago}
+                  >
                     <InputLabel>Método de pago</InputLabel>
                     <Select
                       value={metodoPagoSeleccionado}
                       label="Método de pago"
-                      onChange={(e) => setMetodoPagoSeleccionado(e.target.value)}
+                      onChange={(e) =>
+                        setMetodoPagoSeleccionado(e.target.value)
+                      }
                       sx={{
-                        bgcolor: 'background.paper',
+                        bgcolor: "background.paper",
                         width: "250px",
                         borderRadius: 2,
-                        '& .MuiSelect-select': {
+                        "& .MuiSelect-select": {
                           paddingLeft: 2,
                           paddingY: 1.5,
                         },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: 'primary.main',
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "primary.main",
                         },
                       }}
                     >
                       {metodosPago.map((metodo) => (
-                        <MenuItem key={metodo.metodoPagoId} value={metodo.metodoPagoId}>
-                          <ListItemIcon>{getPaymentIcon(metodo.descripcion)}</ListItemIcon>
+                        <MenuItem
+                          key={metodo.metodoPagoId}
+                          value={metodo.metodoPagoId}
+                        >
+                          <ListItemIcon>
+                            {getPaymentIcon(metodo.descripcion)}
+                          </ListItemIcon>
                           <ListItemText primary={metodo.descripcion} />
                         </MenuItem>
                       ))}
                     </Select>
-                    {errors.metodoPago && <FormHelperText>{errors.metodoPago}</FormHelperText>}
-                    {loadingMetodosPago && <FormHelperText>Cargando métodos de pago...</FormHelperText>}
+                    {errors.metodoPago && (
+                      <FormHelperText>{errors.metodoPago}</FormHelperText>
+                    )}
+                    {loadingMetodosPago && (
+                      <FormHelperText>
+                        Cargando métodos de pago...
+                      </FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
                 {fechaInicio && fechaFin && propiedad.precioPorNoche && (
                   <Grid item xs={12}>
-                    <Paper elevation={0} sx={{ p: 2, bgcolor: "grey.50", borderRadius: 2 }}>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <Paper
+                      elevation={0}
+                      sx={{ p: 2, bgcolor: "grey.50", borderRadius: 2 }}
+                    >
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        gutterBottom
+                      >
                         Resumen de la reserva:
                       </Typography>
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Typography variant="body2">
-                          {Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24))} noche(s) × $
-                          {propiedad.precioPorNoche}
+                          {Math.ceil(
+                            (new Date(fechaFin) - new Date(fechaInicio)) /
+                              (1000 * 60 * 60 * 24)
+                          )}{" "}
+                          noche(s) × ${propiedad.precioPorNoche}
                         </Typography>
-                        <Typography variant="h6" fontWeight="bold" color="primary.main">
+                        <Typography
+                          variant="h6"
+                          fontWeight="bold"
+                          color="primary.main"
+                        >
                           $
                           {(
-                            Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) *
-                            propiedad.precioPorNoche
+                            Math.ceil(
+                              (new Date(fechaFin) - new Date(fechaInicio)) /
+                                (1000 * 60 * 60 * 24)
+                            ) * propiedad.precioPorNoche
                           ).toLocaleString()}
                         </Typography>
                       </Box>
                       {metodoPagoSeleccionado && (
-                        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ mt: 1, display: "block" }}
+                        >
                           Método de pago:{" "}
-                          {metodosPago.find((m) => m.metodoPagoId === metodoPagoSeleccionado)?.descripcion}
+                          {
+                            metodosPago.find(
+                              (m) => m.metodoPagoId === metodoPagoSeleccionado
+                            )?.descripcion
+                          }
                         </Typography>
                       )}
                     </Paper>
@@ -836,7 +1018,12 @@ const DetallePropiedad = () => {
       </Container>
 
       {/* Dialog para crear reseña */}
-      <Dialog open={reviewDialog.open} onClose={handleCloseReviewDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={reviewDialog.open}
+        onClose={handleCloseReviewDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           <Box display="flex" alignItems="center" gap={1}>
             <RateReviewIcon />
@@ -853,8 +1040,8 @@ const DetallePropiedad = () => {
                 name="calificacion"
                 value={reviewDialog.calificacion}
                 onChange={(event, newValue) => {
-                  console.log("Calificación seleccionada:", newValue)
-                  handleReviewChange("calificacion", newValue)
+                  console.log("Calificación seleccionada:", newValue);
+                  handleReviewChange("calificacion", newValue);
                 }}
                 precision={1}
                 size="large"
@@ -862,7 +1049,9 @@ const DetallePropiedad = () => {
                 sx={{ fontSize: "2rem" }}
               />
               {reviewDialog.calificacion === 0 && (
-                <FormHelperText error>Por favor selecciona una calificación</FormHelperText>
+                <FormHelperText error>
+                  Por favor selecciona una calificación
+                </FormHelperText>
               )}
             </Box>
 
@@ -873,8 +1062,8 @@ const DetallePropiedad = () => {
               fullWidth
               value={reviewDialog.comentario}
               onChange={(e) => {
-                console.log("Comentario actualizado:", e.target.value)
-                handleReviewChange("comentario", e.target.value)
+                console.log("Comentario actualizado:", e.target.value);
+                handleReviewChange("comentario", e.target.value);
               }}
               placeholder="Comparte tu experiencia con otros usuarios..."
               error={reviewDialog.comentario.trim() === ""}
@@ -891,27 +1080,53 @@ const DetallePropiedad = () => {
               <Typography variant="caption" color="text.secondary">
                 Debug Info:
               </Typography>
-              <Typography variant="caption" display="block" color="text.secondary">
+              <Typography
+                variant="caption"
+                display="block"
+                color="text.secondary"
+              >
                 Propiedad ID: {reviewDialog.propiedadId}
               </Typography>
-              <Typography variant="caption" display="block" color="text.secondary">
+              <Typography
+                variant="caption"
+                display="block"
+                color="text.secondary"
+              >
                 Reserva ID: {reviewDialog.reservaId}
               </Typography>
-              <Typography variant="caption" display="block" color="text.secondary">
+              <Typography
+                variant="caption"
+                display="block"
+                color="text.secondary"
+              >
                 Calificación: {reviewDialog.calificacion}
               </Typography>
             </Box>
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
-          <Button onClick={handleCloseReviewDialog} disabled={reviewDialog.loading} size="large">
+          <Button
+            onClick={handleCloseReviewDialog}
+            disabled={reviewDialog.loading}
+            size="large"
+          >
             Cancelar
           </Button>
           <Button
             onClick={handleSubmitReview}
             variant="contained"
-            disabled={reviewDialog.loading || reviewDialog.calificacion === 0 || reviewDialog.comentario.trim() === ""}
-            startIcon={reviewDialog.loading ? <CircularProgress size={20} /> : <RateReviewIcon />}
+            disabled={
+              reviewDialog.loading ||
+              reviewDialog.calificacion === 0 ||
+              reviewDialog.comentario.trim() === ""
+            }
+            startIcon={
+              reviewDialog.loading ? (
+                <CircularProgress size={20} />
+              ) : (
+                <RateReviewIcon />
+              )
+            }
             size="large"
             sx={{ minWidth: 140 }}
           >
@@ -927,12 +1142,16 @@ const DetallePropiedad = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
     </>
-  )
-}
+  );
+};
 
-export default DetallePropiedad
+export default DetallePropiedad;

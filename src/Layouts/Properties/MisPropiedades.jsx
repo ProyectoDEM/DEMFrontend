@@ -127,7 +127,7 @@ const MisPropiedades = () => {
           prev.filter((prop) => String(prop.propiedadId) !== String(propiedadId))
         );
 
-
+        
         showSnackbar("Propiedad eliminada correctamente", "success");
       }
 
@@ -146,6 +146,8 @@ const MisPropiedades = () => {
       }
     } finally {
       setActionLoading(propiedadId, false);
+
+      fetchMisPropiedades();
     }
   };
 

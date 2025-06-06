@@ -55,6 +55,7 @@ import RateReviewIcon from "@mui/icons-material/RateReview";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import NavigationBar from "../../Components/NavigationBar";
 import { useApi } from "../../Services/Apis";
+import { showAlert } from "../../Components/AlertMessage";
 
 const DetallePropiedad = () => {
   const location = useLocation();
@@ -397,15 +398,23 @@ const DetallePropiedad = () => {
     };
 
     try {
-      await postRequest("/api/reserva/crear", reservaData);
-      showSnackbar("Reserva realizada con éxito", "success");
-      navigate("/");
-    } catch (error) {
-      if (error?.response?.data?.detalleUsuario) {
-        showSnackbar(error.response.data.detalleUsuario, "error");
+      const response = await postRequest("/api/reserva/crear", reservaData);
+
+      if (response.status === 200) {
+        // Éxito
+        const detalleUsuario = response.data?.detalleUsuario;
+        showAlert(detalleUsuario || "Reserva realizada con éxito", "success");
+        navigate("/");
       } else {
-        showSnackbar("Error al realizar la reserva", "error");
+        // Error (ej. 400 Bad Request)
+        const detalleUsuario = response.data?.detalleUsuario || "Error al crear la reserva";
+        showAlert(detalleUsuario, "error");
+        // Aquí NO navegas, permitiendo que el usuario corrija en la misma página
       }
+    } catch (error) {
+      // Error de red u otro inesperado
+      showAlert("Error inesperado, intenta de nuevo más tarde", "error");
+      console.error(error);
     }
   };
 

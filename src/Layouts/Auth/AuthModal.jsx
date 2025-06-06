@@ -116,7 +116,7 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
           <Box
             sx={{
               flex: 1,
-              backgroundColor: "primary.main",
+              backgroundColor: "#ff385c",
               color: "white",
               display: "flex",
               flexDirection: "column",

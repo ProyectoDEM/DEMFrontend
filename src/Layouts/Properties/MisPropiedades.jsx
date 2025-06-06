@@ -112,22 +112,43 @@ const MisPropiedades = () => {
 
   // Eliminar propiedad
   const handleEliminar = async (propiedadId) => {
-    setActionLoading(propiedadId, true)
+    setActionLoading(propiedadId, true);
+
     try {
-      await deleteRequest(`/api/propiedad/eliminar-propiedad/${propiedadId}`)
+      const res = await deleteRequest(`/api/propiedad/eliminar-propiedad/${propiedadId}`);
 
-      // Actualizar la lista local
-      setPropiedades((prev) => prev.filter((prop) => prop.propiedadId !== propiedadId))
+      // Si el backend responde con 200 pero incluye mensaje de error
+      if (res?.data?.detalleUsuario || res?.data?.errores?.length) {
+        const mensaje = res.data.detalleUsuario || res.data.errores[0];
+        showSnackbar(mensaje, "warning");
+      } else {
+        // Eliminarla del estado local
+        setPropiedades((prev) =>
+          prev.filter((prop) => String(prop.propiedadId) !== String(propiedadId))
+        );
 
-      showSnackbar("Propiedad eliminada correctamente", "success")
-      setDeleteDialog({ open: false, propiedadId: null })
+
+        showSnackbar("Propiedad eliminada correctamente", "success");
+      }
+
+      setDeleteDialog({ open: false, propiedadId: null });
     } catch (error) {
-      console.error("Error al eliminar propiedad:", error)
-      showSnackbar("Error al eliminar la propiedad", "error")
+      console.error("Error al eliminar propiedad:", error);
+
+      const errorData = error?.response?.data;
+
+      if (errorData?.detalleUsuario) {
+        showSnackbar(errorData.detalleUsuario, "error");
+      } else if (Array.isArray(errorData?.errores) && errorData.errores.length) {
+        showSnackbar(errorData.errores[0], "error");
+      } else {
+        showSnackbar("Error al eliminar la propiedad", "error");
+      }
     } finally {
-      setActionLoading(propiedadId, false)
+      setActionLoading(propiedadId, false);
     }
-  }
+  };
+
 
   // Actualizar propiedad
   const handleActualizar = async (propiedadData) => {
@@ -971,6 +992,7 @@ const MisPropiedades = () => {
             <Button onClick={() => setDeleteDialog({ open: false, propiedadId: null })}>Cancelar</Button>
             <Button
               onClick={() => handleEliminar(deleteDialog.propiedadId)}
+              
               color="error"
               variant="contained"
               disabled={loadingActions[deleteDialog.propiedadId]}

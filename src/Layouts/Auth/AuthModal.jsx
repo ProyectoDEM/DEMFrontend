@@ -7,8 +7,11 @@ import {
   Button,
   Box,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { showAlert } from "../../Components/AlertMessage";
 import { useNavigate } from "react-router-dom";
 import DEMLogo from "../../assets/DEMLogo.png";
@@ -16,6 +19,7 @@ import { useApi } from "../../Services/Apis";
 
 const AuthModal = ({ open, onClose, onSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -197,10 +201,23 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
               fullWidth
               label="Contraseña"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               onChange={handleChange}
               variant="outlined"
               size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <Button

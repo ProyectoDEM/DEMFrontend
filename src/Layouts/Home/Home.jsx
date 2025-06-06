@@ -85,6 +85,8 @@ const Home = () => {
   const [precioMax, setPrecioMax] = useState(999999);
   const [rangoPrecio, setRangoPrecio] = useState([0, 999999]);
   const [propiedades, setPropiedades] = useState([]);
+  const [visiblePropiedades, setVisiblePropiedades] = useState([]);
+  const [itemsToShow, setItemsToShow] = useState(6);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [pendingReservationId, setPendingReservationId] = useState(null);
 
@@ -101,17 +103,21 @@ const Home = () => {
           return;
         }
 
-        const precios = response.data.propiedades.map((p) => p.precioPorNoche);
+        const propiedadesData = response.data.propiedades;
+        setPropiedades(propiedadesData);
+        setVisiblePropiedades(propiedadesData.slice(0, 6));
+
+        const precios = propiedadesData.map((p) => p.precioPorNoche);
         const min = Math.min(...precios);
         const max = Math.max(...precios);
         setPrecioMin(min);
         setPrecioMax(max);
         setRangoPrecio([min, max]);
-        setPropiedades(response.data.propiedades);
       } catch (error) {
         console.error("Error al obtener propiedades:", error);
       }
     };
+
     fetchPropiedades();
   }, []);
 
@@ -135,6 +141,31 @@ const Home = () => {
       prop.precioPorNoche >= rangoPrecio[0] &&
       prop.precioPorNoche <= rangoPrecio[1]
   );
+
+  useEffect(() => {
+    const filtradas = propiedades.filter(
+      (prop) =>
+        (!filtroTipo || prop.tipoPropiedadDescripcion === filtroTipo) &&
+        (prop.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
+          prop.descripcion.toLowerCase().includes(busqueda.toLowerCase())) &&
+        (!capacidad || prop.capacidadMaxima >= parseInt(capacidad)) &&
+        (!habitaciones || prop.habitaciones >= parseInt(habitaciones)) &&
+        (!banos || prop.banos >= parseInt(banos)) &&
+        prop.precioPorNoche >= rangoPrecio[0] &&
+        prop.precioPorNoche <= rangoPrecio[1]
+    );
+
+    setVisiblePropiedades(filtradas.slice(0, itemsToShow));
+  }, [
+    propiedades,
+    filtroTipo,
+    busqueda,
+    capacidad,
+    habitaciones,
+    banos,
+    rangoPrecio,
+    itemsToShow,
+  ]);
 
   const handleReservar = (id) => {
     const token = localStorage.getItem("token");
@@ -276,7 +307,7 @@ const Home = () => {
         </FilterBar>
 
         <Grid container spacing={3}>
-          {propiedadesFiltradas.map((prop) => (
+          {visiblePropiedades.map((prop) => (
             <Grid item key={prop.propiedadId} xs={12} sm={6} md={4}>
               <StyledCard onClick={() => handleCardClick(prop.propiedadId)}>
                 <CardMedia
@@ -336,6 +367,20 @@ const Home = () => {
             </Grid>
           ))}
         </Grid>
+
+        {visiblePropiedades.length < propiedadesFiltradas.length && (
+          <Box mt={4} textAlign="center">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                const next = itemsToShow + 6;
+                setItemsToShow(next);
+              }}
+            >
+              Ver más propiedades
+            </Button>
+          </Box>
+        )}
       </Container>
 
       <AuthModal

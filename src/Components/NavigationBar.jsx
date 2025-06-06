@@ -17,12 +17,13 @@ import AuthModal from "../Layouts/Auth/AuthModal";
 import { useApi } from "../Services/Apis";
 import DEMLogo from "../assets/DEMLogo.png";
 
+
 const NavigationBar = ({ logo }) => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [pendingRedirect, setPendingRedirect] = useState(null);
-  const { getRequest } = useApi();
+  const { getRequest, postRequest } = useApi();
 
   useEffect(() => {
     let cancelado = false;
@@ -62,12 +63,20 @@ const NavigationBar = ({ logo }) => {
     };
   }, [userInfo]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+  try {
+    const response = await postRequest("/api/sesion/logout", {});
+    const detalleUsuario = response.data?.detalleUsuario;
+    
     localStorage.clear();
     setUserInfo(null);
-    showAlert("Sesión cerrada exitosamente", "info");
+    showAlert(detalleUsuario || "Sesión cerrada exitosamente", "info");
     navigate("/");
-  };
+  } catch (error) {
+    console.error("Error en logout:", error);
+    showAlert("Error cerrando sesión", "error");
+  }
+};
 
   const handleAuthSuccess = (data) => {
     localStorage.setItem("token", data.token);

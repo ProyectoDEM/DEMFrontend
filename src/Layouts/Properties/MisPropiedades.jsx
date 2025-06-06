@@ -79,7 +79,7 @@ const MisPropiedades = () => {
   const fetchMisPropiedades = async () => {
     setLoading(true)
     try {
-      const response = await getRequest("/api/propiedad/propiedades")
+      const response = await getRequest("/api/propiedad/mis-propiedades")
       if (response.data && response.data.propiedades) {
         setPropiedades(response.data.propiedades || [])
       } else {

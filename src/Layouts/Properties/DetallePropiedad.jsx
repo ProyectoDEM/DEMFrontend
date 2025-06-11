@@ -56,6 +56,7 @@ import AddCommentIcon from "@mui/icons-material/AddComment";
 import NavigationBar from "../../Components/NavigationBar";
 import { useApi } from "../../Services/Apis";
 import { showAlert } from "../../Components/AlertMessage";
+import GaleriaImagenes from "./GaleriaImagenes";
 
 const DetallePropiedad = () => {
   const location = useLocation();
@@ -73,6 +74,7 @@ const DetallePropiedad = () => {
   const [misReservas, setMisReservas] = useState([]);
   const [loadingResenas, setLoadingResenas] = useState(false);
   const [loadingReservas, setLoadingReservas] = useState(false);
+  const [galeriaAbierta, setGaleriaAbierta] = useState(false);
   const [reviewDialog, setReviewDialog] = useState({
     open: false,
     reservaId: null,
@@ -407,7 +409,8 @@ const DetallePropiedad = () => {
         navigate("/");
       } else {
         // Error (ej. 400 Bad Request)
-        const detalleUsuario = response.data?.detalleUsuario || "Error al crear la reserva";
+        const detalleUsuario =
+          response.data?.detalleUsuario || "Error al crear la reserva";
         showAlert(detalleUsuario, "error");
         // Aquí NO navegas, permitiendo que el usuario corrija en la misma página
       }
@@ -499,6 +502,15 @@ const DetallePropiedad = () => {
               <RoomIcon fontSize="small" />
               {propiedad.direccion}, {propiedad.ciudad}, {propiedad.pais}
             </Typography>
+
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ mt: 3, ml: 0 }}
+              onClick={() => setGaleriaAbierta(true)}
+            >
+              Ver todas las imágenes
+            </Button>
           </CardContent>
         </Card>
 
@@ -582,7 +594,6 @@ const DetallePropiedad = () => {
                     icon={<CommentIcon />}
                     iconPosition="start"
                   />
-                 
                 </Tabs>
                 <Button
                   variant="contained"
@@ -1084,8 +1095,6 @@ const DetallePropiedad = () => {
               }
               inputProps={{ maxLength: 500 }}
             />
-
-           
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
@@ -1118,6 +1127,12 @@ const DetallePropiedad = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <GaleriaImagenes
+        propiedadId={propiedad?.propiedadId}
+        open={galeriaAbierta}
+        onClose={() => setGaleriaAbierta(false)}
+      />
 
       {/* Snackbar para notificaciones */}
       <Snackbar

@@ -208,7 +208,7 @@ const MisPropiedades = () => {
   ) => {
     setActionLoading(propiedadId, true);
     try {
-      await putRequest("/api/propiedad/cambiar-disponibilidad", {
+      await postRequest("/api/propiedad/cambiar-disponibilidad", {
         propiedadId,
         disponibilidad: nuevaDisponibilidad,
       });

@@ -57,7 +57,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     if (isDev) {
-      console.log("✅ Response:", response.status, response.config.url);
+      console.log(response);
     }
     return response;
   },

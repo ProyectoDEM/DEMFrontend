@@ -238,7 +238,7 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
             <Button
               variant="contained"
               fullWidth
-              sx={{ mt: 1, borderRadius: 2, textTransform: "none" }}
+              sx={{ mt: 1, borderRadius: 2, textTransform: "none", backgroundColor: "#ff385c" }}
               onClick={handleSubmit}
             >
               {isLogin ? "Ingresar" : "Registrarse"}

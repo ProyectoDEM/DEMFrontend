@@ -467,6 +467,7 @@ const MisPropiedades = () => {
                   textTransform: "none",
                   fontWeight: 500,
                   boxShadow: 2,
+                  backgroundColor: "#ff385c"
                 }}
               >
                 Publicar nuevo

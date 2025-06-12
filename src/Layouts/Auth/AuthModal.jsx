@@ -68,10 +68,12 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
 
     try {
       const res = await postRequest(url, payload);
+      const resultado = res.status === 200;
+      const token = res.data.token;
+      const detalleUsuario = res.data.detalleUsuario || {};
 
       if (isLogin) {
-        const token = res.data.token;
-        const detalleUsuario = res.data.detalleUsuario || {};
+        
         const nombre1 = detalleUsuario.nombre1 || "Usuario";
         const apellido1 = detalleUsuario.apellido1 || "";
 
@@ -79,9 +81,10 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
           localStorage.setItem("token", token);
           localStorage.setItem("nombre1", nombre1);
           localStorage.setItem("apellido1", apellido1);
+
           showAlert(detalleUsuario || "Bienvenido", "success");
           navigate("/");
-
+          
           if (onSuccess) {
             onSuccess({ token, nombre1, apellido1 });
           }
@@ -91,8 +94,12 @@ const AuthModal = ({ open, onClose, onSuccess }) => {
           showAlert(detalleUsuario || "No se pudo iniciar sesión correctamente.", "error");
         }
       } else {
-        showAlert(detalleUsuario || "Cuenta creada con éxito", "success");
-        setIsLogin(true);
+        if (resultado) {
+          showAlert(detalleUsuario || "Cuenta creada con éxito", "success");
+          setIsLogin(true);
+        }else{
+          showAlert(detalleUsuario || "No se pudo crear la cuenta correctamente.", "error");
+        }
       }
     } catch (err) {
       if (err?.response?.data?.detalleUsuario) {

@@ -320,25 +320,39 @@ const DetallePropiedad = () => {
 
       // Enviar reseña a la API
       const response = await postRequest("/api/resena/crear", reviewData);
+      const resultado = response.status === 200;
+      const detalleUsuario = response.data.detalleUsuario || {};
+
 
       console.log("Respuesta de la API:", response);
 
-      // Agregar la nueva reseña a la lista local para mostrarla inmediatamente
-      const nuevaResena = {
-        resenaId: Date.now(), // ID temporal
-        usuarioNombre: localStorage.getItem("nombre1") || "Usuario",
-        calificacion: reviewData.calificacion,
-        comentario: reviewData.comentario,
-        fechaCreacion: new Date().toISOString(),
-      };
+      if(resultado) {
+        // Agregar la nueva reseña a la lista local para mostrarla inmediatamente
+        const nuevaResena = {
+          resenaId: Date.now(), // ID temporal
+          usuarioNombre: localStorage.getItem("nombre1") || "Usuario",
+          calificacion: reviewData.calificacion,
+          comentario: reviewData.comentario,
+          fechaCreacion: new Date().toISOString(),
+        };
 
-      setResenas((prevResenas) => [nuevaResena, ...prevResenas]);
+        setResenas((prevResenas) => [nuevaResena, ...prevResenas]);
 
-      showSnackbar("¡Reseña enviada correctamente!", "success");
-      handleCloseReviewDialog();
+        showAlert(detalleUsuario || "¡Reseña enviada correctamente!", "success");
+        
+        handleCloseReviewDialog();
 
-      // Cambiar a la pestaña de reseñas para mostrar la nueva reseña
-      setTabValue(0);
+        
+
+        // Cambiar a la pestaña de reseñas para mostrar la nueva reseña
+        setTabValue(0);
+
+        console.log("¿El diálogo está abierto?:", reviewDialog.open);
+      }
+      else{
+        showSnackbar(detalleUsuario || "No se pudo crear la reseña", "error");
+      }
+      
     } catch (error) {
       console.error("Error completo al enviar reseña:", error);
       console.error("Error response:", error?.response);
@@ -358,10 +372,10 @@ const DetallePropiedad = () => {
 
       showSnackbar(errorMessage, "error");
     } finally {
-      setReviewDialog({
-        ...reviewDialog,
+      setReviewDialog((prev) => ({
+        ...prev,
         loading: false,
-      });
+      }));
     }
   };
 

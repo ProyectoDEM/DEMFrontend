@@ -559,6 +559,7 @@ const Publicar = () => {
                         fontWeight: 600,
                         textTransform: "none",
                         fontSize: "1.1rem",
+                        backgroundColor: "#ff385c"
                       }}
                     >
                       Continuar →

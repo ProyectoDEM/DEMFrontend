@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -32,90 +32,108 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
-} from "@mui/material"
-import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteIcon from "@mui/icons-material/Delete"
-import LocationOnIcon from "@mui/icons-material/LocationOn"
-import BedIcon from "@mui/icons-material/Bed"
-import BathtubIcon from "@mui/icons-material/Bathtub"
-import PeopleIcon from "@mui/icons-material/People"
-import HotelIcon from "@mui/icons-material/Hotel"
-import HomeIcon from "@mui/icons-material/Home"
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney"
-import VisibilityIcon from "@mui/icons-material/Visibility"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
-import ToggleOnIcon from "@mui/icons-material/ToggleOn"
-import ToggleOffIcon from "@mui/icons-material/ToggleOff"
-import ImageIcon from "@mui/icons-material/Image"
-import SaveIcon from "@mui/icons-material/Save"
-import CancelIcon from "@mui/icons-material/Cancel"
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate"
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera"
-import { useApi } from "../../Services/Apis"
-import NavigationBar from "../../Components/NavigationBar"
+} from "@mui/material";
+import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import BedIcon from "@mui/icons-material/Bed";
+import BathtubIcon from "@mui/icons-material/Bathtub";
+import PeopleIcon from "@mui/icons-material/People";
+import HotelIcon from "@mui/icons-material/Hotel";
+import HomeIcon from "@mui/icons-material/Home";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import ImageIcon from "@mui/icons-material/Image";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { useApi } from "../../Services/Apis";
+import NavigationBar from "../../Components/NavigationBar";
 
 const MisPropiedades = () => {
-  const [propiedades, setPropiedades] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [editDialog, setEditDialog] = useState({ open: false, propiedad: null })
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, propiedadId: null })
-  const [imageDialog, setImageDialog] = useState({ open: false, propiedadId: null })
-  const [selectedImage, setSelectedImage] = useState(null)
-  const [imagePreview, setImagePreview] = useState(null)
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
-  const [menuAnchor, setMenuAnchor] = useState({ element: null, propiedadId: null })
-  const [loadingActions, setLoadingActions] = useState({})
+  const [propiedades, setPropiedades] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editDialog, setEditDialog] = useState({
+    open: false,
+    propiedad: null,
+  });
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    propiedadId: null,
+  });
+  const [imageDialog, setImageDialog] = useState({
+    open: false,
+    propiedadId: null,
+  });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [menuAnchor, setMenuAnchor] = useState({
+    element: null,
+    propiedadId: null,
+  });
+  const [loadingActions, setLoadingActions] = useState({});
 
-  const fileInputRef = useRef(null)
-  const navigate = useNavigate()
-  const { getRequest, deleteRequest, putRequest, postRequest } = useApi()
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+  const { getRequest, deleteRequest, putRequest, postRequest } = useApi();
 
   useEffect(() => {
-    fetchMisPropiedades()
-  }, [])
+    fetchMisPropiedades();
+  }, []);
 
   const fetchMisPropiedades = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await getRequest("/api/propiedad/mis-propiedades")
+      const response = await getRequest("/api/propiedad/mis-propiedades");
       if (response.data && response.data.propiedades) {
-        setPropiedades(response.data.propiedades || [])
+        setPropiedades(response.data.propiedades || []);
       } else {
-        setPropiedades([])
-        console.error("Formato de respuesta inesperado:", response.data)
+        setPropiedades([]);
+        console.error("Formato de respuesta inesperado:", response.data);
       }
     } catch (error) {
-      console.error("Error al cargar propiedades del usuario", error)
-      setPropiedades([])
-      showSnackbar("Error al cargar las propiedades", "error")
+      console.error("Error al cargar propiedades del usuario", error);
+      setPropiedades([]);
+      showSnackbar("Error al cargar las propiedades", "error");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const showSnackbar = (message, severity = "success") => {
-    setSnackbar({ open: true, message, severity })
-  }
+    setSnackbar({ open: true, message, severity });
+  };
 
   const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false })
-  }
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const setActionLoading = (propiedadId, isLoading) => {
     setLoadingActions((prev) => ({
       ...prev,
       [propiedadId]: isLoading,
-    }))
-  }
+    }));
+  };
 
   // Eliminar propiedad
   const handleEliminar = async (propiedadId) => {
     setActionLoading(propiedadId, true);
 
     try {
-      const res = await deleteRequest(`/api/propiedad/eliminar-propiedad/${propiedadId}`);
+      const res = await deleteRequest(
+        `/api/propiedad/eliminar-propiedad/${propiedadId}`
+      );
 
       // Si el backend responde con 200 pero incluye mensaje de error
       if (res?.data?.detalleUsuario || res?.data?.errores?.length) {
@@ -124,9 +142,10 @@ const MisPropiedades = () => {
       } else {
         // Eliminarla del estado local
         setPropiedades((prev) =>
-          prev.filter((prop) => String(prop.propiedadId) !== String(propiedadId))
+          prev.filter(
+            (prop) => String(prop.propiedadId) !== String(propiedadId)
+          )
         );
-
 
         showSnackbar("Propiedad eliminada correctamente", "success");
       }
@@ -139,100 +158,128 @@ const MisPropiedades = () => {
 
       if (errorData?.detalleUsuario) {
         showSnackbar(errorData.detalleUsuario, "error");
-      } else if (Array.isArray(errorData?.errores) && errorData.errores.length) {
+      } else if (
+        Array.isArray(errorData?.errores) &&
+        errorData.errores.length
+      ) {
         showSnackbar(errorData.errores[0], "error");
       } else {
         showSnackbar("Error al eliminar la propiedad", "error");
       }
     } finally {
       setActionLoading(propiedadId, false);
+
+      fetchMisPropiedades();
     }
   };
 
-
   // Actualizar propiedad
   const handleActualizar = async (propiedadData) => {
-    setActionLoading(propiedadData.propiedadId, true)
+    setActionLoading(propiedadData.propiedadId, true);
     try {
-      const response = await putRequest("/api/propiedad/actualizar", propiedadData)
-
-      // Actualizar la lista local
-      setPropiedades((prev) =>
-        prev.map((prop) => (prop.propiedadId === propiedadData.propiedadId ? { ...prop, ...propiedadData } : prop)),
-      )
-
-      showSnackbar("Propiedad actualizada correctamente", "success")
-      setEditDialog({ open: false, propiedad: null })
-    } catch (error) {
-      console.error("Error al actualizar propiedad:", error)
-      showSnackbar("Error al actualizar la propiedad", "error")
-    } finally {
-      setActionLoading(propiedadData.propiedadId, false)
-    }
-  }
-
-  // Cambiar disponibilidad
-  const handleCambiarDisponibilidad = async (propiedadId, nuevaDisponibilidad) => {
-    setActionLoading(propiedadId, true)
-    try {
-      await putRequest("/api/propiedad/cambiar-disponibilidad", {
-        propiedadId,
-        disponibilidad: nuevaDisponibilidad,
-      })
+      const response = await postRequest(
+        "/api/propiedad/actualizar",
+        propiedadData
+      );
 
       // Actualizar la lista local
       setPropiedades((prev) =>
         prev.map((prop) =>
-          prop.propiedadId === propiedadId ? { ...prop, disponibilidad: nuevaDisponibilidad } : prop,
-        ),
-      )
+          prop.propiedadId === propiedadData.propiedadId
+            ? { ...prop, ...propiedadData }
+            : prop
+        )
+      );
 
-      showSnackbar(`Propiedad ${nuevaDisponibilidad ? "activada" : "desactivada"} correctamente`, "success")
+      showSnackbar("Propiedad actualizada correctamente", "success");
+      setEditDialog({ open: false, propiedad: null });
     } catch (error) {
-      console.error("Error al cambiar disponibilidad:", error)
-      showSnackbar("Error al cambiar la disponibilidad", "error")
+      console.error("Error al actualizar propiedad:", error);
+      showSnackbar("Error al actualizar la propiedad", "error");
     } finally {
-      setActionLoading(propiedadId, false)
+      setActionLoading(propiedadData.propiedadId, false);
     }
-  }
+  };
+
+  // Cambiar disponibilidad
+  const handleCambiarDisponibilidad = async (
+    propiedadId,
+    nuevaDisponibilidad
+  ) => {
+    setActionLoading(propiedadId, true);
+    try {
+      await postRequest("/api/propiedad/cambiar-disponibilidad", {
+        propiedadId,
+        disponibilidad: nuevaDisponibilidad,
+      });
+
+      // Actualizar la lista local
+      setPropiedades((prev) =>
+        prev.map((prop) =>
+          prop.propiedadId === propiedadId
+            ? { ...prop, disponibilidad: nuevaDisponibilidad }
+            : prop
+        )
+      );
+
+      showSnackbar(
+        `Propiedad ${
+          nuevaDisponibilidad ? "activada" : "desactivada"
+        } correctamente`,
+        "success"
+      );
+    } catch (error) {
+      console.error("Error al cambiar disponibilidad:", error);
+      showSnackbar("Error al cambiar la disponibilidad", "error");
+    } finally {
+      setActionLoading(propiedadId, false);
+    }
+  };
 
   // Eliminar imagen
   const handleEliminarImagen = async (imagenId, propiedadId) => {
-    setActionLoading(propiedadId, true)
+    setActionLoading(propiedadId, true);
     try {
-      await deleteRequest(`/api/propiedad/eliminar-imagen/${imagenId}`)
+      await deleteRequest(`/api/propiedad/eliminar-imagen/${imagenId}`);
 
       // Actualizar la propiedad local para quitar la imagen
       setPropiedades((prev) =>
-        prev.map((prop) => (prop.propiedadId === propiedadId ? { ...prop, imagenBase64: null, imagenId: null } : prop)),
-      )
+        prev.map((prop) =>
+          prop.propiedadId === propiedadId
+            ? { ...prop, imagenBase64: null, imagenId: null }
+            : prop
+        )
+      );
 
-      showSnackbar("Imagen eliminada correctamente", "success")
+      showSnackbar("Imagen eliminada correctamente", "success");
     } catch (error) {
-      console.error("Error al eliminar imagen:", error)
-      showSnackbar("Error al eliminar la imagen", "error")
+      console.error("Error al eliminar imagen:", error);
+      showSnackbar("Error al eliminar la imagen", "error");
     } finally {
-      setActionLoading(propiedadId, false)
+      setActionLoading(propiedadId, false);
     }
-  }
+  };
 
   // Guardar imagen
   const handleGuardarImagen = async () => {
     if (!selectedImage || !imageDialog.propiedadId) {
-      showSnackbar("Debes seleccionar una imagen", "error")
-      return
+      showSnackbar("Debes seleccionar una imagen", "error");
+      return;
     }
 
-    setActionLoading(imageDialog.propiedadId, true)
+    setActionLoading(imageDialog.propiedadId, true);
 
     try {
       // Crear FormData para enviar la imagen
-      const formData = new FormData()
-      formData.append("propiedadId", imageDialog.propiedadId)
-      formData.append("imagen", selectedImage)
+      const formData = new FormData();
+      formData.append("propiedadId", imageDialog.propiedadId);
+      formData.append("imagen", selectedImage);
 
       // Enviar la imagen al servidor
-      const response = await postRequest("/api/propiedad/guardar-imagen", formData)
+      const response = await postRequest(
+        "/api/propiedad/guardar-imagen",
+        formData
+      );
 
       // Si la API devuelve la imagen en base64, actualizar la propiedad
       if (response.data && response.data.imagenBase64) {
@@ -244,119 +291,121 @@ const MisPropiedades = () => {
                   imagenBase64: response.data.imagenBase64,
                   imagenId: response.data.imagenId,
                 }
-              : prop,
-          ),
-        )
+              : prop
+          )
+        );
       } else {
         // Si no devuelve la imagen, recargar las propiedades
-        await fetchMisPropiedades()
+        await fetchMisPropiedades();
       }
 
-      showSnackbar("Imagen guardada correctamente", "success")
-      handleCloseImageDialog()
+      showSnackbar("Imagen guardada correctamente", "success");
+      handleCloseImageDialog();
     } catch (error) {
-      console.error("Error al guardar la imagen:", error)
-      showSnackbar("Error al guardar la imagen", "error")
+      console.error("Error al guardar la imagen:", error);
+      showSnackbar("Error al guardar la imagen", "error");
     } finally {
-      setActionLoading(imageDialog.propiedadId, false)
+      setActionLoading(imageDialog.propiedadId, false);
     }
-  }
+  };
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0]
+    const file = event.target.files[0];
     if (file) {
-      setSelectedImage(file)
+      setSelectedImage(file);
 
       // Crear preview de la imagen
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result)
-      }
-      reader.readAsDataURL(file)
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleOpenImageDialog = (propiedadId) => {
-    setImageDialog({ open: true, propiedadId })
-    setSelectedImage(null)
-    setImagePreview(null)
-    handleMenuClose()
-  }
+    setImageDialog({ open: true, propiedadId });
+    setSelectedImage(null);
+    setImagePreview(null);
+    handleMenuClose();
+  };
 
   const handleCloseImageDialog = () => {
-    setImageDialog({ open: false, propiedadId: null })
-    setSelectedImage(null)
-    setImagePreview(null)
-  }
+    setImageDialog({ open: false, propiedadId: null });
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
 
   const handlePublicarClick = () => {
-    navigate("/publicar")
-  }
+    navigate("/publicar");
+  };
 
   const handleVolverClick = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   const handleVerDetalles = (id) => {
-    navigate(`/propiedad/${id}`)
-  }
+    navigate(`/propiedad/${id}`);
+  };
 
   const handleMenuClick = (event, propiedadId) => {
-    setMenuAnchor({ element: event.currentTarget, propiedadId })
-  }
+    setMenuAnchor({ element: event.currentTarget, propiedadId });
+  };
 
   const handleMenuClose = () => {
-    setMenuAnchor({ element: null, propiedadId: null })
-  }
+    setMenuAnchor({ element: null, propiedadId: null });
+  };
 
   const openEditDialog = (propiedad) => {
-    setEditDialog({ open: true, propiedad: { ...propiedad } })
-    handleMenuClose()
-  }
+    setEditDialog({ open: true, propiedad: { ...propiedad } });
+    handleMenuClose();
+  };
 
   const openDeleteDialog = (propiedadId) => {
-    setDeleteDialog({ open: true, propiedadId })
-    handleMenuClose()
-  }
+    setDeleteDialog({ open: true, propiedadId });
+    handleMenuClose();
+  };
 
   // Función para truncar texto largo
   const truncateText = (text, maxLength) => {
-    if (!text) return ""
-    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text
-  }
+    if (!text) return "";
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
+  };
 
   // Función para formatear precio
   const formatPrice = (price) => {
-    if (!price && price !== 0) return "Precio no disponible"
+    if (!price && price !== 0) return "Precio no disponible";
     return new Intl.NumberFormat("es-CL", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(price)
-  }
+    }).format(price);
+  };
 
   // Función para formatear fecha
   const formatDate = (dateString) => {
-    if (!dateString) return ""
-    const date = new Date(dateString)
+    if (!dateString) return "";
+    const date = new Date(dateString);
     return date.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "short",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   // Función para obtener el color del badge según el tipo de propiedad
   const getTipoColor = (tipo) => {
-    if (!tipo) return "default"
+    if (!tipo) return "default";
 
-    const tipoLower = tipo.toLowerCase()
-    if (tipoLower.includes("casa")) return "primary"
-    if (tipoLower.includes("apartamento")) return "secondary"
-    if (tipoLower.includes("cabaña")) return "warning"
-    if (tipoLower.includes("hotel")) return "info"
-    return "default"
-  }
+    const tipoLower = tipo.toLowerCase();
+    if (tipoLower.includes("casa")) return "primary";
+    if (tipoLower.includes("apartamento")) return "secondary";
+    if (tipoLower.includes("cabaña")) return "warning";
+    if (tipoLower.includes("hotel")) return "info";
+    return "default";
+  };
 
   return (
     <>
@@ -374,7 +423,13 @@ const MisPropiedades = () => {
             borderColor: "divider",
           }}
         >
-          <Box display="flex" justifyContent="space-between" alignItems="center" maxWidth="1200px" mx="auto">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            maxWidth="1200px"
+            mx="auto"
+          >
             <Box>
               <Typography variant="h5" fontWeight={600}>
                 Mis propiedades
@@ -383,7 +438,8 @@ const MisPropiedades = () => {
                 Administra tus alojamientos publicados
                 {propiedades.length > 0 && (
                   <Typography component="span" sx={{ ml: 1, fontWeight: 500 }}>
-                    ({propiedades.length} {propiedades.length === 1 ? "propiedad" : "propiedades"})
+                    ({propiedades.length}{" "}
+                    {propiedades.length === 1 ? "propiedad" : "propiedades"})
                   </Typography>
                 )}
               </Typography>
@@ -411,6 +467,7 @@ const MisPropiedades = () => {
                   textTransform: "none",
                   fontWeight: 500,
                   boxShadow: 2,
+                  backgroundColor: "#ff385c"
                 }}
               >
                 Publicar nuevo
@@ -421,7 +478,13 @@ const MisPropiedades = () => {
 
         <Box maxWidth="1200px" mx="auto" px={3}>
           {loading ? (
-            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="300px">
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              minHeight="300px"
+            >
               <CircularProgress />
               <Typography variant="body2" color="text.secondary" mt={2}>
                 Cargando tus propiedades...
@@ -445,6 +508,7 @@ const MisPropiedades = () => {
                   bgcolor: "primary.light",
                   mx: "auto",
                   mb: 3,
+                  backgroundColor: "#ff385c"
                 }}
               >
                 <AddHomeWorkIcon sx={{ fontSize: 40 }} />
@@ -452,8 +516,13 @@ const MisPropiedades = () => {
               <Typography variant="h5" fontWeight={600} gutterBottom>
                 Aún no has publicado ninguna propiedad
               </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 500, mx: "auto", mb: 4 }}>
-                Comienza a publicar tus alojamientos para que los huéspedes puedan encontrarlos y realizar reservas.
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ maxWidth: 500, mx: "auto", mb: 4 }}
+              >
+                Comienza a publicar tus alojamientos para que los huéspedes
+                puedan encontrarlos y realizar reservas.
               </Typography>
               <Button
                 variant="contained"
@@ -468,6 +537,7 @@ const MisPropiedades = () => {
                   px: 4,
                   py: 1.5,
                   boxShadow: 3,
+                  backgroundColor: "#ff385c"
                 }}
               >
                 Publicar mi primer alojamiento
@@ -497,7 +567,10 @@ const MisPropiedades = () => {
                       <CardMedia
                         component="img"
                         height="200"
-                        image={prop.imagenBase64 || "/placeholder.svg?height=200&width=400"}
+                        image={
+                          prop.imagenBase64 ||
+                          "/placeholder.svg?height=200&width=400"
+                        }
                         alt={prop.titulo}
                         sx={{ objectFit: "cover" }}
                       />
@@ -512,7 +585,9 @@ const MisPropiedades = () => {
                             bgcolor: "rgba(255,255,255,0.9)",
                             "&:hover": { bgcolor: "rgba(255,255,255,1)" },
                           }}
-                          onClick={() => handleOpenImageDialog(prop.propiedadId)}
+                          onClick={() =>
+                            handleOpenImageDialog(prop.propiedadId)
+                          }
                         >
                           <AddPhotoAlternateIcon />
                         </IconButton>
@@ -530,7 +605,9 @@ const MisPropiedades = () => {
                         }}
                       >
                         <Chip
-                          label={prop.disponibilidad ? "Disponible" : "No disponible"}
+                          label={
+                            prop.disponibilidad ? "Disponible" : "No disponible"
+                          }
                           color={prop.disponibilidad ? "success" : "error"}
                           size="small"
                           sx={{
@@ -538,10 +615,17 @@ const MisPropiedades = () => {
                             boxShadow: 1,
                             cursor: "pointer",
                           }}
-                          onClick={() => handleCambiarDisponibilidad(prop.propiedadId, !prop.disponibilidad)}
+                          onClick={() =>
+                            handleCambiarDisponibilidad(
+                              prop.propiedadId,
+                              !prop.disponibilidad
+                            )
+                          }
                         />
                         <Chip
-                          icon={<HomeIcon sx={{ fontSize: "0.8rem !important" }} />}
+                          icon={
+                            <HomeIcon sx={{ fontSize: "0.8rem !important" }} />
+                          }
                           label={prop.tipoPropiedadDescripcion}
                           color={getTipoColor(prop.tipoPropiedadDescripcion)}
                           size="small"
@@ -584,14 +668,20 @@ const MisPropiedades = () => {
                             alignItems: "center",
                           }}
                         >
-                          <AttachMoneyIcon sx={{ fontSize: 18, mr: 0.5, opacity: 0.9 }} />
+                          <AttachMoneyIcon
+                            sx={{ fontSize: 18, mr: 0.5, opacity: 0.9 }}
+                          />
                           <Typography
                             variant="subtitle2"
                             fontWeight={600}
                             sx={{ textShadow: "0px 1px 2px rgba(0,0,0,0.5)" }}
                           >
                             {formatPrice(prop.precioPorNoche)}
-                            <Typography component="span" variant="caption" sx={{ ml: 0.5, opacity: 0.9 }}>
+                            <Typography
+                              component="span"
+                              variant="caption"
+                              sx={{ ml: 0.5, opacity: 0.9 }}
+                            >
                               / noche
                             </Typography>
                           </Typography>
@@ -633,8 +723,15 @@ const MisPropiedades = () => {
                         {prop.titulo}
                       </Typography>
 
-                      <Box display="flex" alignItems="center" mb={1.5} sx={{ color: "text.secondary" }}>
-                        <LocationOnIcon sx={{ fontSize: 16, mr: 0.5, color: "primary.main" }} />
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        mb={1.5}
+                        sx={{ color: "text.secondary" }}
+                      >
+                        <LocationOnIcon
+                          sx={{ fontSize: 16, mr: 0.5, color: "primary.main" }}
+                        />
                         <Typography
                           variant="body2"
                           sx={{
@@ -667,8 +764,18 @@ const MisPropiedades = () => {
 
                       <Grid container spacing={1} sx={{ mt: 0.5 }}>
                         <Grid item xs={4}>
-                          <Box display="flex" alignItems="center" title="Habitaciones">
-                            <BedIcon sx={{ fontSize: 18, mr: 0.5, color: "text.secondary" }} />
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            title="Habitaciones"
+                          >
+                            <BedIcon
+                              sx={{
+                                fontSize: 18,
+                                mr: 0.5,
+                                color: "text.secondary",
+                              }}
+                            />
                             <Typography variant="body2" color="text.secondary">
                               {prop.habitaciones || 0}
                             </Typography>
@@ -676,7 +783,13 @@ const MisPropiedades = () => {
                         </Grid>
                         <Grid item xs={4}>
                           <Box display="flex" alignItems="center" title="Baños">
-                            <BathtubIcon sx={{ fontSize: 18, mr: 0.5, color: "text.secondary" }} />
+                            <BathtubIcon
+                              sx={{
+                                fontSize: 18,
+                                mr: 0.5,
+                                color: "text.secondary",
+                              }}
+                            />
                             <Typography variant="body2" color="text.secondary">
                               {prop.banos || 0}
                             </Typography>
@@ -684,7 +797,13 @@ const MisPropiedades = () => {
                         </Grid>
                         <Grid item xs={4}>
                           <Box display="flex" alignItems="center" title="Camas">
-                            <HotelIcon sx={{ fontSize: 18, mr: 0.5, color: "text.secondary" }} />
+                            <HotelIcon
+                              sx={{
+                                fontSize: 18,
+                                mr: 0.5,
+                                color: "text.secondary",
+                              }}
+                            />
                             <Typography variant="body2" color="text.secondary">
                               {prop.camas || 0}
                             </Typography>
@@ -692,14 +811,32 @@ const MisPropiedades = () => {
                         </Grid>
                       </Grid>
 
-                      <Box display="flex" alignItems="center" mt={1.5} title="Capacidad máxima">
-                        <PeopleIcon sx={{ fontSize: 18, mr: 0.5, color: "text.secondary" }} />
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        mt={1.5}
+                        title="Capacidad máxima"
+                      >
+                        <PeopleIcon
+                          sx={{
+                            fontSize: 18,
+                            mr: 0.5,
+                            color: "text.secondary",
+                          }}
+                        />
                         <Typography variant="body2" color="text.secondary">
-                          {prop.capacidadMaxima || 0} {prop.capacidadMaxima === 1 ? "persona" : "personas"} máx.
+                          {prop.capacidadMaxima || 0}{" "}
+                          {prop.capacidadMaxima === 1 ? "persona" : "personas"}{" "}
+                          máx.
                         </Typography>
                       </Box>
 
-                      <Typography variant="caption" color="text.secondary" display="block" mt={1.5}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                        mt={1.5}
+                      >
                         Publicado: {formatDate(prop.fechaCreacion)}
                       </Typography>
                     </CardContent>
@@ -742,8 +879,10 @@ const MisPropiedades = () => {
         >
           <MenuItem
             onClick={() => {
-              const propiedad = propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)
-              openEditDialog(propiedad)
+              const propiedad = propiedades.find(
+                (p) => p.propiedadId === menuAnchor.propiedadId
+              );
+              openEditDialog(propiedad);
             }}
           >
             <ListItemIcon>
@@ -752,7 +891,9 @@ const MisPropiedades = () => {
             <ListItemText>Editar propiedad</ListItemText>
           </MenuItem>
 
-          <MenuItem onClick={() => handleOpenImageDialog(menuAnchor.propiedadId)}>
+          <MenuItem
+            onClick={() => handleOpenImageDialog(menuAnchor.propiedadId)}
+          >
             <ListItemIcon>
               <AddPhotoAlternateIcon fontSize="small" />
             </ListItemIcon>
@@ -761,29 +902,39 @@ const MisPropiedades = () => {
 
           <MenuItem
             onClick={() => {
-              const propiedad = propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)
-              handleCambiarDisponibilidad(propiedad.propiedadId, !propiedad.disponibilidad)
+              const propiedad = propiedades.find(
+                (p) => p.propiedadId === menuAnchor.propiedadId
+              );
+              handleCambiarDisponibilidad(
+                propiedad.propiedadId,
+                !propiedad.disponibilidad
+              );
             }}
           >
             <ListItemIcon>
-              {propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)?.disponibilidad ? (
+              {propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)
+                ?.disponibilidad ? (
                 <ToggleOffIcon fontSize="small" />
               ) : (
                 <ToggleOnIcon fontSize="small" />
               )}
             </ListItemIcon>
             <ListItemText>
-              {propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)?.disponibilidad
+              {propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)
+                ?.disponibilidad
                 ? "Marcar como no disponible"
                 : "Marcar como disponible"}
             </ListItemText>
           </MenuItem>
 
-          {propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)?.imagenId && (
+          {propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)
+            ?.imagenId && (
             <MenuItem
               onClick={() => {
-                const propiedad = propiedades.find((p) => p.propiedadId === menuAnchor.propiedadId)
-                handleEliminarImagen(propiedad.imagenId, propiedad.propiedadId)
+                const propiedad = propiedades.find(
+                  (p) => p.propiedadId === menuAnchor.propiedadId
+                );
+                handleEliminarImagen(propiedad.imagenId, propiedad.propiedadId);
               }}
             >
               <ListItemIcon>
@@ -795,7 +946,10 @@ const MisPropiedades = () => {
 
           <Divider />
 
-          <MenuItem onClick={() => openDeleteDialog(menuAnchor.propiedadId)} sx={{ color: "error.main" }}>
+          <MenuItem
+            onClick={() => openDeleteDialog(menuAnchor.propiedadId)}
+            sx={{ color: "error.main" }}
+          >
             <ListItemIcon>
               <DeleteIcon fontSize="small" color="error" />
             </ListItemIcon>
@@ -835,7 +989,10 @@ const MisPropiedades = () => {
                 onChange={(e) =>
                   setEditDialog((prev) => ({
                     ...prev,
-                    propiedad: { ...prev.propiedad, descripcion: e.target.value },
+                    propiedad: {
+                      ...prev.propiedad,
+                      descripcion: e.target.value,
+                    },
                   }))
                 }
                 sx={{ mb: 2 }}
@@ -849,7 +1006,10 @@ const MisPropiedades = () => {
                 onChange={(e) =>
                   setEditDialog((prev) => ({
                     ...prev,
-                    propiedad: { ...prev.propiedad, precioPorNoche: Number.parseFloat(e.target.value) },
+                    propiedad: {
+                      ...prev.propiedad,
+                      precioPorNoche: Number.parseFloat(e.target.value),
+                    },
                   }))
                 }
                 sx={{ mb: 2 }}
@@ -862,7 +1022,10 @@ const MisPropiedades = () => {
                     onChange={(e) =>
                       setEditDialog((prev) => ({
                         ...prev,
-                        propiedad: { ...prev.propiedad, disponibilidad: e.target.checked },
+                        propiedad: {
+                          ...prev.propiedad,
+                          disponibilidad: e.target.checked,
+                        },
                       }))
                     }
                   />
@@ -872,7 +1035,10 @@ const MisPropiedades = () => {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setEditDialog({ open: false, propiedad: null })} startIcon={<CancelIcon />}>
+            <Button
+              onClick={() => setEditDialog({ open: false, propiedad: null })}
+              startIcon={<CancelIcon />}
+            >
               Cancelar
             </Button>
             <Button
@@ -887,10 +1053,22 @@ const MisPropiedades = () => {
         </Dialog>
 
         {/* Dialog para subir imagen */}
-        <Dialog open={imageDialog.open} onClose={handleCloseImageDialog} maxWidth="sm" fullWidth>
+        <Dialog
+          open={imageDialog.open}
+          onClose={handleCloseImageDialog}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>Cambiar imagen de la propiedad</DialogTitle>
           <DialogContent>
-            <Box sx={{ pt: 2, display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <Box
+              sx={{
+                pt: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               {imagePreview ? (
                 <Box sx={{ mb: 3, width: "100%", position: "relative" }}>
                   <img
@@ -912,8 +1090,8 @@ const MisPropiedades = () => {
                       bgcolor: "rgba(255,255,255,0.8)",
                     }}
                     onClick={() => {
-                      setSelectedImage(null)
-                      setImagePreview(null)
+                      setSelectedImage(null);
+                      setImagePreview(null);
                     }}
                   >
                     <CancelIcon />
@@ -936,8 +1114,14 @@ const MisPropiedades = () => {
                   }}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <PhotoCameraIcon sx={{ fontSize: 48, color: "text.secondary", mb: 2 }} />
-                  <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <PhotoCameraIcon
+                    sx={{ fontSize: 48, color: "text.secondary", mb: 2 }}
+                  />
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     Haz clic para seleccionar una imagen
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -973,7 +1157,9 @@ const MisPropiedades = () => {
               onClick={handleGuardarImagen}
               variant="contained"
               startIcon={<SaveIcon />}
-              disabled={!selectedImage || loadingActions[imageDialog.propiedadId]}
+              disabled={
+                !selectedImage || loadingActions[imageDialog.propiedadId]
+              }
             >
               Guardar imagen
             </Button>
@@ -981,18 +1167,27 @@ const MisPropiedades = () => {
         </Dialog>
 
         {/* Dialog de confirmación de eliminación */}
-        <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, propiedadId: null })}>
+        <Dialog
+          open={deleteDialog.open}
+          onClose={() => setDeleteDialog({ open: false, propiedadId: null })}
+        >
           <DialogTitle>Confirmar eliminación</DialogTitle>
           <DialogContent>
             <Typography>
-              ¿Estás seguro de que deseas eliminar esta propiedad? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar esta propiedad? Esta acción
+              no se puede deshacer.
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDeleteDialog({ open: false, propiedadId: null })}>Cancelar</Button>
+            <Button
+              onClick={() =>
+                setDeleteDialog({ open: false, propiedadId: null })
+              }
+            >
+              Cancelar
+            </Button>
             <Button
               onClick={() => handleEliminar(deleteDialog.propiedadId)}
-              
               color="error"
               variant="contained"
               disabled={loadingActions[deleteDialog.propiedadId]}
@@ -1009,13 +1204,17 @@ const MisPropiedades = () => {
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
             {snackbar.message}
           </Alert>
         </Snackbar>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default MisPropiedades
+export default MisPropiedades;

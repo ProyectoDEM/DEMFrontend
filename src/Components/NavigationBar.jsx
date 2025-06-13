@@ -112,10 +112,11 @@ const NavigationBar = ({ logo }) => {
         position="sticky"
         color="default"
         elevation={3}
-        sx={{ width: "100%", top: 0, left: 0, zIndex: 1300, backgroundColor: "#f44336" }}
-      >
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+
+        sx={{ width: "100%", top: 0, left: 0, zIndex: 1300, backgroundColor: "#ff385c", color: "white !important"}}
+>
+        <Container maxWidth="lg" sx={{backgroundColor: "#ff385c !important"}}>
+          <Toolbar style={{backgroundColor: "#ff385c !important"}} disableGutters sx={{ justifyContent: "space-between" }}>
             <Box
               onClick={() => navigate("/")}
               sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}

@@ -56,6 +56,7 @@ import AddCommentIcon from "@mui/icons-material/AddComment";
 import NavigationBar from "../../Components/NavigationBar";
 import { useApi } from "../../Services/Apis";
 import { showAlert } from "../../Components/AlertMessage";
+import GaleriaImagenes from "./GaleriaImagenes";
 
 const DetallePropiedad = () => {
   const location = useLocation();
@@ -73,6 +74,7 @@ const DetallePropiedad = () => {
   const [misReservas, setMisReservas] = useState([]);
   const [loadingResenas, setLoadingResenas] = useState(false);
   const [loadingReservas, setLoadingReservas] = useState(false);
+  const [galeriaAbierta, setGaleriaAbierta] = useState(false);
   const [reviewDialog, setReviewDialog] = useState({
     open: false,
     reservaId: null,
@@ -190,7 +192,7 @@ const DetallePropiedad = () => {
     setLoadingReservas(true);
     try {
       // Obtener las reservas del usuario
-      const response = await getRequest("/api/reserva/listar-reservas/2");
+      const response = await getRequest(`/api/reserva/listar-reservas/${propiedadId}`);
       console.log("Respuesta de reservas:", response);
 
       if (response && response.data && response.data.reservas) {
@@ -220,27 +222,33 @@ const DetallePropiedad = () => {
   };
 
   const handleOpenReviewDialog = (reservaId = null) => {
-    // Si no hay reservaId específico, usar la primera reserva disponible o un ID por defecto
-    let selectedReservaId = reservaId;
+  if (!misReservas || misReservas.length === 0) {
+    // Mostrar alerta o notificación al usuario
+    showAlert("No cuentas con ninguna reserva registrada para poder hacer una reseña.", "warning");
+    return; // Salir sin abrir el diálogo
+  }
 
-    if (!selectedReservaId && misReservas.length > 0) {
-      selectedReservaId = misReservas[0].reservaId;
-    } else if (!selectedReservaId) {
-      // Si no hay reservas, usar un ID por defecto para testing
-      selectedReservaId = 1;
-    }
+  // Selección lógica del ID de reserva
+  let selectedReservaId = reservaId;
 
-    console.log("Abriendo dialog de reseña con reservaId:", selectedReservaId);
+  if (!selectedReservaId && misReservas.length > 0) {
+    selectedReservaId = misReservas[0].reservaId;
+  } else if (!selectedReservaId) {
+    selectedReservaId = null; // ID por defecto si no hay reservas, aunque este caso ya no se dará
+  }
 
-    setReviewDialog({
-      open: true,
-      reservaId: selectedReservaId,
-      propiedadId: Number.parseInt(id),
-      calificacion: 0,
-      comentario: "",
-      loading: false,
-    });
-  };
+  console.log("Abriendo dialog de reseña con reservaId:", selectedReservaId);
+
+  setReviewDialog({
+    open: true,
+    reservaId: selectedReservaId,
+    propiedadId: Number.parseInt(id),
+    calificacion: 0,
+    comentario: "",
+    loading: false,
+  });
+};
+
 
   const handleCloseReviewDialog = () => {
     setReviewDialog({
@@ -312,25 +320,39 @@ const DetallePropiedad = () => {
 
       // Enviar reseña a la API
       const response = await postRequest("/api/resena/crear", reviewData);
+      const resultado = response.status === 200;
+      const detalleUsuario = response.data.detalleUsuario || {};
+
 
       console.log("Respuesta de la API:", response);
 
-      // Agregar la nueva reseña a la lista local para mostrarla inmediatamente
-      const nuevaResena = {
-        resenaId: Date.now(), // ID temporal
-        usuarioNombre: localStorage.getItem("nombre1") || "Usuario",
-        calificacion: reviewData.calificacion,
-        comentario: reviewData.comentario,
-        fechaCreacion: new Date().toISOString(),
-      };
+      if(resultado) {
+        // Agregar la nueva reseña a la lista local para mostrarla inmediatamente
+        const nuevaResena = {
+          resenaId: Date.now(), // ID temporal
+          usuarioNombre: localStorage.getItem("nombre1") || "Usuario",
+          calificacion: reviewData.calificacion,
+          comentario: reviewData.comentario,
+          fechaCreacion: new Date().toISOString(),
+        };
 
-      setResenas((prevResenas) => [nuevaResena, ...prevResenas]);
+        setResenas((prevResenas) => [nuevaResena, ...prevResenas]);
 
-      showSnackbar("¡Reseña enviada correctamente!", "success");
-      handleCloseReviewDialog();
+        showAlert(detalleUsuario || "¡Reseña enviada correctamente!", "success");
+        
+        handleCloseReviewDialog();
 
-      // Cambiar a la pestaña de reseñas para mostrar la nueva reseña
-      setTabValue(0);
+        
+
+        // Cambiar a la pestaña de reseñas para mostrar la nueva reseña
+        setTabValue(0);
+
+        console.log("¿El diálogo está abierto?:", reviewDialog.open);
+      }
+      else{
+        showSnackbar(detalleUsuario || "No se pudo crear la reseña", "error");
+      }
+      
     } catch (error) {
       console.error("Error completo al enviar reseña:", error);
       console.error("Error response:", error?.response);
@@ -350,10 +372,10 @@ const DetallePropiedad = () => {
 
       showSnackbar(errorMessage, "error");
     } finally {
-      setReviewDialog({
-        ...reviewDialog,
+      setReviewDialog((prev) => ({
+        ...prev,
         loading: false,
-      });
+      }));
     }
   };
 
@@ -407,7 +429,8 @@ const DetallePropiedad = () => {
         navigate("/");
       } else {
         // Error (ej. 400 Bad Request)
-        const detalleUsuario = response.data?.detalleUsuario || "Error al crear la reserva";
+        const detalleUsuario =
+          response.data?.detalleUsuario || "Error al crear la reserva";
         showAlert(detalleUsuario, "error");
         // Aquí NO navegas, permitiendo que el usuario corrija en la misma página
       }
@@ -499,6 +522,15 @@ const DetallePropiedad = () => {
               <RoomIcon fontSize="small" />
               {propiedad.direccion}, {propiedad.ciudad}, {propiedad.pais}
             </Typography>
+
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ mt: 3, ml: 0 }}
+              onClick={() => setGaleriaAbierta(true)}
+            >
+              Ver todas las imágenes
+            </Button>
           </CardContent>
         </Card>
 
@@ -582,17 +614,25 @@ const DetallePropiedad = () => {
                     icon={<CommentIcon />}
                     iconPosition="start"
                   />
-                 
                 </Tabs>
+
+
+
+
                 <Button
                   variant="contained"
                   size="small"
                   startIcon={<AddCommentIcon />}
                   onClick={() => handleOpenReviewDialog()}
-                  sx={{ borderRadius: 2, mb: 1 }}
+                  sx={{ borderRadius: 2, mb: 1, backgroundColor: "#ff385c" }}
                 >
                   Dejar reseña
                 </Button>
+
+
+
+
+
               </Box>
 
               {/* Panel de Reseñas */}
@@ -1015,7 +1055,7 @@ const DetallePropiedad = () => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    sx={{ borderRadius: 2, textTransform: "none" }}
+                    sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#ff385c" }}
                     onClick={handleReserva}
                   >
                     Reservar
@@ -1040,8 +1080,38 @@ const DetallePropiedad = () => {
             Dejar una reseña
           </Box>
         </DialogTitle>
+
         <DialogContent>
           <Box sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Selector de Reserva */}
+            <FormControl fullWidth>
+              <InputLabel id="reserva-select-label">Selecciona una reserva</InputLabel>
+              <Select
+                labelId="reserva-select-label"
+                value={reviewDialog.reservaId || ""}
+                label="Selecciona una reserva"
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  console.log("Reserva seleccionada:", selectedId);
+                  setReviewDialog((prev) => ({
+                    ...prev,
+                    reservaId: selectedId,
+                  }));
+                }}
+                disabled={misReservas.length === 0}
+              >
+                {misReservas.map((reserva) => (
+                  <MenuItem key={reserva.reservaId} value={reserva.reservaId}>
+                    Reserva #{reserva.reservaId} - {reserva.fechaInicio} a {reserva.fechaFin}
+                  </MenuItem>
+                ))}
+              </Select>
+              {misReservas.length === 0 && (
+                <FormHelperText>No tienes reservas disponibles para reseñar</FormHelperText>
+              )}
+            </FormControl>
+
+            {/* Calificación */}
             <Box>
               <Typography variant="body1" fontWeight={500} gutterBottom>
                 ¿Cómo calificarías tu experiencia?
@@ -1065,6 +1135,7 @@ const DetallePropiedad = () => {
               )}
             </Box>
 
+            {/* Comentario */}
             <TextField
               label="Comentario"
               multiline
@@ -1084,10 +1155,9 @@ const DetallePropiedad = () => {
               }
               inputProps={{ maxLength: 500 }}
             />
-
-           
           </Box>
         </DialogContent>
+
         <DialogActions sx={{ p: 3 }}>
           <Button
             onClick={handleCloseReviewDialog}
@@ -1102,7 +1172,8 @@ const DetallePropiedad = () => {
             disabled={
               reviewDialog.loading ||
               reviewDialog.calificacion === 0 ||
-              reviewDialog.comentario.trim() === ""
+              reviewDialog.comentario.trim() === "" ||
+              !reviewDialog.reservaId
             }
             startIcon={
               reviewDialog.loading ? (
@@ -1118,6 +1189,13 @@ const DetallePropiedad = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+
+      <GaleriaImagenes
+        propiedadId={propiedad?.propiedadId}
+        open={galeriaAbierta}
+        onClose={() => setGaleriaAbierta(false)}
+      />
 
       {/* Snackbar para notificaciones */}
       <Snackbar

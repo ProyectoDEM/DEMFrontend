@@ -508,6 +508,7 @@ const MisPropiedades = () => {
                   bgcolor: "primary.light",
                   mx: "auto",
                   mb: 3,
+                  backgroundColor: "#ff385c"
                 }}
               >
                 <AddHomeWorkIcon sx={{ fontSize: 40 }} />
@@ -536,6 +537,7 @@ const MisPropiedades = () => {
                   px: 4,
                   py: 1.5,
                   boxShadow: 3,
+                  backgroundColor: "#ff385c"
                 }}
               >
                 Publicar mi primer alojamiento

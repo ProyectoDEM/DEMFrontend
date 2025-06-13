@@ -624,7 +624,7 @@ const DetallePropiedad = () => {
                   size="small"
                   startIcon={<AddCommentIcon />}
                   onClick={() => handleOpenReviewDialog()}
-                  sx={{ borderRadius: 2, mb: 1 }}
+                  sx={{ borderRadius: 2, mb: 1, backgroundColor: "#ff385c" }}
                 >
                   Dejar reseña
                 </Button>
@@ -1055,7 +1055,7 @@ const DetallePropiedad = () => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    sx={{ borderRadius: 2, textTransform: "none" }}
+                    sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#ff385c" }}
                     onClick={handleReserva}
                   >
                     Reservar
